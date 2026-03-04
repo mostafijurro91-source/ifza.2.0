@@ -99,8 +99,8 @@ export default function CategorySection({ setScreen, category, catalogs }: { set
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-dark text-white">
-      <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-slate-800">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center p-4 justify-between max-w-7xl mx-auto w-full">
           <button onClick={() => setScreen('home')} className="flex size-10 items-center justify-center rounded-full hover:bg-slate-800 transition-colors cursor-pointer">
             <ChevronLeft className="size-6" />
@@ -177,7 +177,7 @@ export default function CategorySection({ setScreen, category, catalogs }: { set
         </section>
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 border-t border-slate-800 bg-background-dark/95 backdrop-blur-xl z-[60] md:hidden">
+      <footer className="fixed bottom-0 left-0 right-0 border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl z-[60] md:hidden">
         <div className="flex gap-2 px-4 pb-8 pt-4">
           <NavItem icon={<Home className="size-5" />} label="Home" onClick={() => setScreen('home')} />
           <NavItem icon={<ShoppingBag className="size-5 fill-primary" />} label="Shop" active />
@@ -203,7 +203,7 @@ function TabItem({ label, active, isSale, onClick }: { label: string, active?: b
 
 function CategoryCard({ image, name, items }: { image: string, name: string, items: string }) {
   return (
-    <div className="group relative bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-800 cursor-pointer">
+    <div className="group relative bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 cursor-pointer">
       <div className="aspect-[4/5] bg-slate-800 flex items-center justify-center relative">
         <img src={image} alt={name} className="object-cover w-full h-full" referrerPolicy="no-referrer" />
         <button className="absolute top-2 right-2 size-8 bg-slate-800/80 backdrop-blur rounded-full flex items-center justify-center shadow-sm">

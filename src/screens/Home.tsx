@@ -5,12 +5,12 @@ import { Screen, Product } from '../types';
 
 export default function HomeDashboard({ setScreen, cartCount }: { setScreen: (s: Screen, p?: Product) => void, cartCount: number }) {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-24 bg-background-dark">
-      <header className="sticky top-0 z-50 flex items-center bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-primary/10 md:hidden">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-24 bg-background-light dark:bg-background-dark transition-colors duration-300">
+      <header className="sticky top-0 z-50 flex items-center bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-slate-200 dark:border-primary/10 md:hidden">
         <div className="flex size-12 shrink-0 items-center justify-start">
           <Menu className="text-primary size-6 cursor-pointer" />
         </div>
-        <h1 className="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-black italic">IFZA</h1>
+        <h1 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-black italic">IFZA</h1>
         <div className="flex size-12 items-center justify-end gap-3 relative">
           <div className="relative">
             <ShoppingBag className="text-primary size-6 cursor-pointer" onClick={() => setScreen('cart')} />
@@ -25,12 +25,12 @@ export default function HomeDashboard({ setScreen, cartCount }: { setScreen: (s:
 
       <main className="flex flex-col gap-6 md:gap-10 pb-8">
         <div className="px-4 pt-4 md:pt-10 max-w-4xl mx-auto w-full">
-          <div className="flex w-full items-stretch rounded-2xl h-14 bg-surface-dark/50 border border-primary/20 shadow-lg shadow-black/20 focus-within:border-primary transition-all">
+          <div className="flex w-full items-stretch rounded-2xl h-14 bg-slate-100 dark:bg-surface-dark/50 border border-slate-200 dark:border-primary/20 shadow-lg shadow-black/5 dark:shadow-black/20 focus-within:border-primary transition-all">
             <div className="flex items-center justify-center pl-5">
               <Search className="text-primary/60 size-5" />
             </div>
             <input
-              className="flex w-full border-none bg-transparent focus:outline-none text-white placeholder:text-slate-500 px-4 text-base font-normal"
+              className="flex w-full border-none bg-transparent focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-500 px-4 text-base font-normal"
               placeholder="Search for styles or virtual try-on..."
             />
             <div className="flex items-center justify-center pr-5 border-l border-white/5 ml-2 hover:bg-white/5 transition-colors rounded-r-2xl cursor-pointer">
@@ -110,7 +110,7 @@ export default function HomeDashboard({ setScreen, cartCount }: { setScreen: (s:
 
         <section className="max-w-7xl mx-auto w-full pt-6">
           <div className="flex items-center justify-between px-4 mb-6 md:mb-10">
-            <h3 className="text-white text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">Browse Categories</h3>
+            <h3 className="text-slate-900 dark:text-white text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">Browse Categories</h3>
             <button
               onClick={() => setScreen('discover')}
               className="text-xs md:text-sm font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors border-b-2 border-primary/20 pb-1"
@@ -149,11 +149,11 @@ export default function HomeDashboard({ setScreen, cartCount }: { setScreen: (s:
                 <div className="size-10 bg-accent-blue/10 rounded-xl flex items-center justify-center">
                   <Zap className="text-accent-blue size-6 fill-accent-blue" />
                 </div>
-                <h3 className="text-white text-2xl md:text-3xl font-black italic uppercase tracking-tighter">Trending Now</h3>
+                <h3 className="text-slate-900 dark:text-white text-2xl md:text-3xl font-black italic uppercase tracking-tighter">Trending Now</h3>
               </div>
               <div className="hidden md:flex gap-2">
-                <button className="size-10 border border-white/5 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors text-white"><ChevronLeft className="size-5" /></button>
-                <button className="size-10 border border-white/5 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors text-white rotate-180"><ChevronLeft className="size-5" /></button>
+                <button className="size-10 border border-slate-200 dark:border-white/5 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-slate-900 dark:text-white"><ChevronLeft className="size-5" /></button>
+                <button className="size-10 border border-slate-200 dark:border-white/5 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-slate-900 dark:text-white rotate-180"><ChevronLeft className="size-5" /></button>
               </div>
             </div>
 
@@ -212,12 +212,12 @@ export default function HomeDashboard({ setScreen, cartCount }: { setScreen: (s:
         </section>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-primary/10 bg-background-dark/95 px-4 pb-8 pt-4 backdrop-blur-xl md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-slate-200 dark:border-primary/10 bg-white/95 dark:bg-background-dark/95 px-4 pb-8 pt-4 backdrop-blur-xl md:hidden">
         <NavItem icon={<Home className="size-5 fill-primary" />} label="Home" active />
         <NavItem icon={<Compass className="size-5" />} label="Discover" onClick={() => setScreen('discover')} />
         <div className="relative -top-6 flex flex-col items-center gap-1 cursor-pointer" onClick={() => setScreen('try-on')}>
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-accent-blue p-1 shadow-xl shadow-primary/30">
-            <div className="flex h-full w-full items-center justify-center rounded-full bg-background-dark">
+            <div className="flex h-full w-full items-center justify-center rounded-full bg-white dark:bg-background-dark">
               <Accessibility className="size-8 text-white" />
             </div>
           </div>
@@ -246,7 +246,7 @@ function TrendingItem({ product, onClick }: { product: Product, onClick?: (p: Pr
         )}
       </div>
       <div>
-        <p className="text-sm font-medium text-white truncate">{product.name}</p>
+        <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{product.name}</p>
         <p className="text-xs text-primary font-bold">৳{product.price.toFixed(2)}</p>
       </div>
     </div>

@@ -5,8 +5,8 @@ import { Screen, Product } from '../types';
 
 export default function BabySection({ setScreen }: { setScreen: (s: Screen, p?: Product) => void }) {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-dark text-white">
-      <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/5 md:hidden">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-white/5 md:hidden">
         <div className="flex items-center p-4 justify-between">
           <button onClick={() => setScreen('home')} className="flex size-10 items-center justify-center rounded-full hover:bg-slate-800 transition-colors cursor-pointer text-primary">
             <ChevronLeft className="size-6" />
@@ -141,7 +141,7 @@ export default function BabySection({ setScreen }: { setScreen: (s: Screen, p?: 
         </section>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/5 md:hidden">
         <div className="flex gap-2 px-4 pb-8 pt-4">
           <BabyNavItem icon={<Home className="size-5" />} label="Home" onClick={() => setScreen('home')} />
           <BabyNavItem icon={<ShoppingBag className="size-5 fill-primary" />} label="Shop" active />
@@ -158,7 +158,7 @@ function CategoryCard({ image, name, items, onClick }: { image: string, name: st
   return (
     <div
       onClick={onClick}
-      className="group relative bg-slate-900 rounded-3xl overflow-hidden border border-white/5 cursor-pointer shadow-xl transition-all hover:border-primary/30"
+      className="group relative bg-slate-50 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-white/5 cursor-pointer shadow-xl transition-all hover:border-primary/30"
     >
       <div className="aspect-[4/5] bg-slate-800 flex items-center justify-center relative overflow-hidden">
         <img src={image} alt={name} className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />

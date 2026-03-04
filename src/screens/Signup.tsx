@@ -14,8 +14,8 @@ export default function Signup({ setScreen, onSignup }: { setScreen: (s: Screen)
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark text-white p-6 justify-center">
-      <button 
+    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white p-6 justify-center transition-colors duration-300">
+      <button
         onClick={() => setScreen('login')}
         className="absolute top-12 left-6 text-slate-400 hover:text-white transition-colors"
       >
@@ -23,8 +23,8 @@ export default function Signup({ setScreen, onSignup }: { setScreen: (s: Screen)
       </button>
 
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-primary/20 to-transparent"></div>
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 space-y-8 max-w-sm mx-auto w-full"
@@ -39,12 +39,12 @@ export default function Signup({ setScreen, onSignup }: { setScreen: (s: Screen)
             <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Full Name</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-500" />
-              <input 
+              <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl py-4 pl-12 pr-4 text-slate-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
                 placeholder="Elena Rossi"
               />
             </div>
@@ -54,12 +54,12 @@ export default function Signup({ setScreen, onSignup }: { setScreen: (s: Screen)
             <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-500" />
-              <input 
+              <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl py-4 pl-12 pr-4 text-slate-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
                 placeholder="hello@example.com"
               />
             </div>
@@ -69,12 +69,12 @@ export default function Signup({ setScreen, onSignup }: { setScreen: (s: Screen)
             <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-500" />
-              <input 
+              <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl py-4 pl-12 pr-4 text-slate-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
                 placeholder="••••••••"
               />
             </div>
@@ -84,7 +84,7 @@ export default function Signup({ setScreen, onSignup }: { setScreen: (s: Screen)
             By signing up, you agree to our <span className="text-primary">Terms of Service</span> and <span className="text-primary">Privacy Policy</span>.
           </p>
 
-          <button 
+          <button
             type="submit"
             className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 neon-glow transition-all active:scale-95"
           >

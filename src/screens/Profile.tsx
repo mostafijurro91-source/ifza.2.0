@@ -5,8 +5,8 @@ import { Screen, UserProfile } from '../types';
 
 export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: Screen) => void, user: UserProfile, onLogout: () => void }) {
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark text-white">
-      <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-primary/10 md:hidden pb-safe">
+    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/10 md:hidden pb-safe">
         <div className="flex items-center p-4 justify-between">
           <div className="w-10">
             <Settings className="text-primary size-6 cursor-pointer" />
@@ -31,7 +31,7 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
                   {!user.isLoggedIn && <User className="size-full p-8 text-slate-700" />}
                 </div>
               </div>
-              <button className="absolute -bottom-2 -right-2 bg-primary text-white size-10 md:size-12 rounded-2xl flex items-center justify-center border-4 border-background-dark shadow-xl hover:scale-110 transition-transform">
+              <button className="absolute -bottom-2 -right-2 bg-primary text-white size-10 md:size-12 rounded-2xl flex items-center justify-center border-4 border-background-light dark:border-background-dark shadow-xl hover:scale-110 transition-transform">
                 <Edit2 className="size-5" />
               </button>
             </div>
@@ -53,7 +53,7 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
               {user.isLoggedIn ? (
                 <>
                   <button className="flex-1 bg-primary text-white font-black uppercase tracking-widest py-4 rounded-2xl text-xs shadow-2xl shadow-primary/20 hover:bg-orange-600 transition-colors">Edit Profile</button>
-                  <button className="flex-1 bg-white/5 text-white font-black uppercase tracking-widest py-4 rounded-2xl text-xs border border-white/10 hover:bg-white/10 transition-colors">Settings</button>
+                  <button className="flex-1 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white font-black uppercase tracking-widest py-4 rounded-2xl text-xs border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">Settings</button>
                 </>
               ) : (
                 <button
@@ -101,7 +101,7 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
 
             <section>
               <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-6 px-2">Account Hub</h3>
-              <div className="bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden backdrop-blur-3xl">
+              <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden backdrop-blur-3xl shadow-xl">
                 <QuickLink icon={<ShoppingBag className="size-5" />} label="Recent Orders" onClick={() => setScreen('orders')} />
                 <QuickLink icon={<Heart className="size-5" />} label="Virtual Closet" />
                 <QuickLink icon={<Ruler className="size-5" />} label="Size Preferences" />
@@ -123,11 +123,11 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
       </main>
 
       {/* Mobile Footer */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 pb-8 pt-4 px-8 flex justify-between items-center z-50 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/5 pb-8 pt-4 px-8 flex justify-between items-center z-50 md:hidden">
         <ProfileNavItem icon={<Home className="size-5" />} label="Home" onClick={() => setScreen('home')} />
         <ProfileNavItem icon={<Search className="size-5" />} label="Explore" />
         <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => setScreen('try-on')}>
-          <div className="bg-primary p-2.5 rounded-2xl -mt-10 shadow-2xl shadow-primary/50 ring-4 ring-background-dark">
+          <div className="bg-primary p-2.5 rounded-2xl -mt-10 shadow-2xl shadow-primary/50 ring-4 ring-background-light dark:ring-background-dark">
             <Sparkles className="size-7 text-white" />
           </div>
           <span className="text-[9px] font-black text-primary uppercase tracking-tighter mt-1">Try-On</span>
@@ -141,9 +141,9 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
 
 function StatCard({ value, label }: { value: string, label: string }) {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-3xl p-4 flex flex-col items-center justify-center hover:bg-primary/10 transition-colors cursor-default">
+    <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-3xl p-4 flex flex-col items-center justify-center hover:bg-primary/10 transition-colors cursor-default">
       <span className="text-2xl md:text-3xl font-black italic tracking-tighter text-primary">{value}</span>
-      <span className="text-[9px] uppercase tracking-[0.2em] font-black text-slate-500 text-center mt-1">{label}</span>
+      <span className="text-[9px] uppercase tracking-[0.2em] font-black text-slate-500 dark:text-slate-400 text-center mt-1">{label}</span>
     </div>
   );
 }

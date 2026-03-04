@@ -31,8 +31,8 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
 
   if (showCheckout) {
     return (
-      <div className="relative flex min-h-screen w-full flex-col bg-background-dark text-white">
-        <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md px-4 py-4 md:py-6 flex items-center border-b border-primary/10">
+      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+        <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 md:py-6 flex items-center border-b border-slate-200 dark:border-primary/10">
           <div className="max-w-7xl mx-auto w-full flex items-center">
             <button onClick={() => setShowCheckout(false)} className="flex items-center justify-center p-2 rounded-full hover:bg-primary/10 transition-colors text-primary mr-4">
               <ChevronLeft className="size-6" />
@@ -56,7 +56,7 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
                       required
                       value={checkoutForm.name}
                       onChange={e => setCheckoutForm({ ...checkoutForm, name: e.target.value })}
-                      className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all shadow-xl"
+                      className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl py-4 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-500 focus:outline-none focus:border-primary transition-all shadow-xl"
                       placeholder="e.g. Abdullah Al Mamun"
                     />
                   </div>
@@ -71,7 +71,7 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
                       required
                       value={checkoutForm.phone}
                       onChange={e => setCheckoutForm({ ...checkoutForm, phone: e.target.value })}
-                      className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all shadow-xl"
+                      className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl py-4 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-500 focus:outline-none focus:border-primary transition-all shadow-xl"
                       placeholder="+880 1XXX-XXXXXX"
                     />
                   </div>
@@ -85,7 +85,7 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
                       required
                       value={checkoutForm.address}
                       onChange={e => setCheckoutForm({ ...checkoutForm, address: e.target.value })}
-                      className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all shadow-xl min-h-[120px] resize-none"
+                      className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl py-4 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-500 focus:outline-none focus:border-primary transition-all shadow-xl min-h-[120px] resize-none"
                       placeholder="House, Street, Area, City..."
                     />
                   </div>
@@ -138,8 +138,8 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark text-white">
-      <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md px-4 py-4 md:py-6 border-b border-primary/10">
+    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 md:py-6 border-b border-slate-200 dark:border-primary/10">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <button onClick={() => setScreen('home')} className="flex items-center justify-center p-2 rounded-full hover:bg-primary/10 transition-colors text-primary">
             <ChevronLeft className="size-6" />
@@ -147,7 +147,7 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
           <h1 className="text-xl md:text-3xl font-black italic tracking-tighter uppercase">Shopping Bag</h1>
           <div className="relative cursor-pointer" onClick={() => setShowCheckout(true)}>
             <ShoppingCart className="size-6 text-primary" />
-            <span className="absolute -top-2 -right-2 bg-white text-primary text-[10px] font-black size-5 rounded-full flex items-center justify-center shadow-lg ring-2 ring-background-dark">
+            <span className="absolute -top-2 -right-2 bg-slate-900 dark:bg-white text-white dark:text-primary text-[10px] font-black size-5 rounded-full flex items-center justify-center shadow-lg ring-2 ring-background-light dark:ring-background-dark">
               {cart.length}
             </span>
           </div>
@@ -166,10 +166,10 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
             </div>
 
             {cart.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-slate-600 bg-white/5 rounded-[3rem] border-2 border-dashed border-white/5">
+              <div className="flex flex-col items-center justify-center py-24 text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-white/5 rounded-[3rem] border-2 border-dashed border-slate-200 dark:border-white/5">
                 <ShoppingBag className="size-20 mb-6 opacity-20" />
                 <p className="text-xl font-black italic uppercase tracking-tighter">Your bag is breathing empty</p>
-                <button onClick={() => setScreen('home')} className="mt-6 text-primary font-black uppercase tracking-widest border-b-2 border-primary pb-1 hover:text-white transition-colors">Start Your Journey</button>
+                <button onClick={() => setScreen('home')} className="mt-6 text-primary font-black uppercase tracking-widest border-b-2 border-primary pb-1 hover:text-slate-900 dark:hover:text-white transition-colors">Start Your Journey</button>
               </div>
             ) : (
               <div className="space-y-6">
@@ -220,7 +220,7 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
       </main>
 
       {/* Mobile Footer (Hidden on Desktop) */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 pb-8 pt-4 px-8 flex justify-between items-center z-50 md:hidden">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/5 pb-8 pt-4 px-8 flex justify-between items-center z-50 md:hidden">
         <CartNavItem icon={<Home className="size-5" />} label="Home" onClick={() => setScreen('home')} />
         <CartNavItem icon={<Camera className="size-5" />} label="Try-On" onClick={() => setScreen('try-on')} />
         <CartNavItem icon={<ShoppingCart className="size-5 fill-primary" />} label="Cart" active />

@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { Sun, Moon, ShoppingBag, User, Sparkles } from 'lucide-react';
 import { Screen, UserProfile, CartItem, Order, Product, Catalog } from './types';
 
 // Screens
@@ -297,9 +298,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col items-center">
+    <div className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-white flex flex-col items-center transition-colors duration-300">
       {/* Desktop Header */}
-      <header className="hidden md:flex w-full bg-background-dark/80 backdrop-blur-md border-b border-primary/10 sticky top-0 z-[100] justify-center px-6">
+      <header className="hidden md:flex w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/10 sticky top-0 z-[100] justify-center px-6">
         <div className="flex w-full max-w-7xl h-16 items-center justify-between">
           <div className="flex items-center gap-8">
             <h1
@@ -313,7 +314,7 @@ export default function App() {
                 <button
                   key={cat}
                   onClick={() => setScreen(cat.toLowerCase() === 'accessories' ? 'accs' : cat.toLowerCase() as Screen)}
-                  className="text-sm font-bold text-slate-400 hover:text-primary transition-colors uppercase tracking-widest"
+                  className="text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-primary transition-colors uppercase tracking-widest"
                 >
                   {cat}
                 </button>
@@ -322,9 +323,15 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4 text-slate-400">
+            <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className="p-2 hover:text-primary transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-white/5"
+              >
+                {isDarkMode ? <Sun className="size-5" /> : <Moon className="size-5" />}
+              </button>
               <button onClick={() => setScreen('cart')} className="relative p-2 hover:text-primary transition-colors">
-                <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                <ShoppingBag className="size-6" />
                 {cartCount > 0 && (
                   <span className="absolute top-0 right-0 size-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                     {cartCount}
@@ -332,7 +339,7 @@ export default function App() {
                 )}
               </button>
               <button onClick={() => setScreen('profile')} className="p-2 hover:text-primary transition-colors">
-                <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                <User className="size-6" />
               </button>
             </div>
 
