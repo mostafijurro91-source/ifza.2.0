@@ -4,9 +4,9 @@
 @theme {
   --font-display: "Spline Sans", ui-sans-serif, system-ui, sans-serif;
   --color-primary: #f27f0d;
-  --color-background-dark: #221910;
-  --color-background-light: #f8f7f5;
-  --color-surface-dark: #27211b;
+  --color-background-dark: #000000;
+  --color-background-light: #ffffff;
+  --color-surface-dark: #0a0a0a;
   --color-accent-blue: #0ea5e9;
 }
 
@@ -19,6 +19,7 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

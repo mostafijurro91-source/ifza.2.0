@@ -108,10 +108,13 @@ export default function App() {
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
+    // Force the dark class on html to enable Tailwind's dark: modifiers
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
     }
   }, [isDarkMode]);
 

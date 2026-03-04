@@ -25,8 +25,8 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
-      <header className="p-4 flex items-center gap-4 border-b border-white/5 sticky top-0 bg-[#0a0a0f]/80 backdrop-blur-md z-10">
+    <div className="min-h-screen bg-background-light dark:bg-[#0a0a0f] text-slate-900 dark:text-white flex flex-col transition-colors duration-300">
+      <header className="p-4 flex items-center gap-4 border-b border-slate-200 dark:border-white/5 sticky top-0 bg-white/80 dark:bg-[#0a0a0f]/80 backdrop-blur-md z-10">
         <button onClick={() => setScreen('admin')} className="size-10 flex items-center justify-center bg-white/5 rounded-xl">
           <ChevronLeft className="size-6" />
         </button>
@@ -36,13 +36,13 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
       <main className="flex-1 p-4 space-y-6">
         <div className="flex gap-3">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
-            <input 
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500" 
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+            <input
+              className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 transition-colors"
               placeholder="Search inventory..."
             />
           </div>
-          <button 
+          <button
             onClick={() => setScreen('add-product')}
             className="px-4 bg-blue-600 rounded-xl flex items-center gap-2 font-bold text-sm"
           >
@@ -60,26 +60,26 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
 
           <div className="grid gap-3">
             {products.map(product => (
-              <motion.div 
+              <motion.div
                 layout
-                key={product.id} 
-                className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4"
+                key={product.id}
+                className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 flex items-center gap-4 shadow-sm"
               >
                 <div className="size-16 rounded-xl overflow-hidden bg-slate-800 shrink-0">
                   <img src={product.image} alt={product.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="font-bold text-sm truncate">{product.name}</h3>
                     <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded uppercase">{product.category}</span>
                   </div>
-                  
+
                   {editingId === product.id ? (
                     <div className="flex items-center gap-3 mt-2">
                       <div className="flex-1">
                         <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">Price ($)</p>
-                        <input 
+                        <input
                           type="number"
                           value={editForm.price}
                           onChange={e => setEditForm(prev => ({ ...prev, price: Number(e.target.value) }))}
@@ -88,7 +88,7 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
                       </div>
                       <div className="flex-1">
                         <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">Stock</p>
-                        <input 
+                        <input
                           type="number"
                           value={editForm.stock}
                           onChange={e => setEditForm(prev => ({ ...prev, stock: Number(e.target.value) }))}
@@ -110,7 +110,7 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
                         <div>
                           <p className="text-[8px] font-bold text-slate-500 uppercase">Stock</p>
                           <div className="flex items-center gap-1">
-                            <p className={`text-sm font-bold ${product.stock < 10 ? 'text-orange-500' : 'text-white'}`}>{product.stock}</p>
+                            <p className={`text-sm font-bold ${product.stock < 10 ? 'text-orange-500' : 'text-slate-900 dark:text-white'}`}>{product.stock}</p>
                             {product.stock < 10 && <AlertCircle className="size-3 text-orange-500" />}
                           </div>
                         </div>
@@ -140,7 +140,7 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
         </div>
       </div>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#0a0a0f] border-t border-white/5 pb-8 pt-3 px-6 flex justify-between items-center z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-[#0a0a0f]/95 border-t border-slate-200 dark:border-white/5 pb-8 pt-3 px-6 flex justify-between items-center z-50 transition-colors duration-300">
         <AdminNavItem icon={<LayoutDashboard className="size-5" />} label="Overview" onClick={() => setScreen('admin')} />
         <AdminNavItem icon={<Package className="size-5 text-blue-500" />} label="Inventory" active onClick={() => setScreen('admin-inventory')} />
         <AdminNavItem icon={<ReceiptText className="size-5" />} label="Orders" onClick={() => setScreen('admin-orders')} />

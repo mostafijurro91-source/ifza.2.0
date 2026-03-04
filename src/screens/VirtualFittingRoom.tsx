@@ -55,12 +55,12 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark overflow-x-hidden">
-      <header className="flex items-center bg-background-dark/80 p-4 pb-2 justify-between sticky top-0 z-50 backdrop-blur-md md:hidden">
-        <button onClick={() => setScreen('product')} className="text-white flex size-10 shrink-0 items-center justify-center cursor-pointer">
+    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden transition-colors duration-300">
+      <header className="flex items-center bg-white/80 dark:bg-background-dark/80 p-4 pb-2 justify-between sticky top-0 z-50 backdrop-blur-md md:hidden border-b border-slate-200 dark:border-white/5">
+        <button onClick={() => setScreen('product')} className="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center cursor-pointer">
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-black italic">IFZA</h1>
+        <h1 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-black italic">IFZA</h1>
         <div className="flex w-10 items-center justify-end">
           <button className="flex cursor-pointer items-center justify-center rounded-full size-10 bg-primary/10 text-primary">
             <Share2 className="size-5" />
@@ -141,7 +141,7 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
                     <span className="px-3 py-1 bg-primary text-white text-[10px] font-black rounded-full uppercase tracking-widest animate-pulse">Live AI</span>
                     <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Active Look #2026</span>
                   </div>
-                  <h3 className="text-white text-2xl md:text-3xl font-black italic tracking-tighter uppercase leading-none">Fit Preview</h3>
+                  <h3 className="text-slate-900 dark:text-white text-2xl md:text-3xl font-black italic tracking-tighter uppercase leading-none">Fit Preview</h3>
                 </div>
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
                   <Camera className="size-10" />
                 </div>
                 <div>
-                  <h3 className="text-white text-2xl font-black italic uppercase tracking-tighter mb-2">Upload Your Photo</h3>
+                  <h3 className="text-slate-900 dark:text-white text-2xl font-black italic uppercase tracking-tighter mb-2">Upload Your Photo</h3>
                   <p className="text-sm text-slate-400 max-w-xs mx-auto">For pixel-perfect AI results, upload a well-lit photo of the person who will wear these styles.</p>
                 </div>
 
@@ -192,7 +192,7 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
             ) : (
               <section className="space-y-10">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-white text-xl md:text-2xl font-black italic uppercase tracking-tighter">Wardrobe (জামা ও খেলনা)</h3>
+                  <h3 className="text-slate-900 dark:text-white text-xl md:text-2xl font-black italic uppercase tracking-tighter">Wardrobe (জামা ও খেলনা)</h3>
                   <button
                     onClick={() => setSelectedItems({ Tops: null, Bottoms: null, Shoes: null, Glasses: null, Toys: null })}
                     className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:text-primary transition-colors border-b border-white/10"
@@ -250,11 +250,11 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
 
             <section className="bg-white/5 border border-white/5 rounded-3xl p-6 flex items-center justify-between group hover:border-primary/20 transition-all">
               <div className="flex items-center gap-5">
-                <div className="size-14 bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                <div className="size-14 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
                   <Baby className="size-8" />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-white uppercase tracking-widest">Switch Model</p>
+                  <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Switch Model</p>
                   <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Active: Baby #01</p>
                 </div>
               </div>
@@ -276,7 +276,7 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
         </button>
       </div>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/5 md:hidden">
         <div className="flex gap-2 px-4 pb-8 pt-2">
           <FitNavItem icon={<Home className="size-5" />} label="Home" onClick={() => setScreen('home')} />
           <FitNavItem icon={<Search className="size-5" />} label="Search" />

@@ -10,9 +10,9 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
 
   if (!product) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-background-dark text-white">
-        <p>Product not found</p>
-        <button onClick={() => setScreen('home')} className="ml-4 text-primary underline">Go Home</button>
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+        <p className="text-xl font-bold">Product not found</p>
+        <button onClick={() => setScreen('home')} className="mt-6 text-primary font-black uppercase tracking-widest border-b-2 border-primary">Go Home</button>
       </div>
     );
   }
@@ -24,18 +24,18 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark overflow-x-hidden">
-      <header className="sticky top-0 z-50 flex items-center bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-primary/10 md:hidden">
+    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden transition-colors duration-300">
+      <header className="sticky top-0 z-50 flex items-center bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-slate-200 dark:border-primary/10 md:hidden">
         <button
           onClick={() => setScreen('home')}
-          className="text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors"
+          className="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors"
         >
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-black italic">IFZA</h1>
+        <h1 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-black italic">IFZA</h1>
         <div className="flex items-center gap-1">
-          <button className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
-            <Share2 className="size-5 text-white" />
+          <button className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10 transition-colors text-slate-900 dark:text-white">
+            <Share2 className="size-5" />
           </button>
         </div>
       </header>
@@ -78,7 +78,7 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
                   <span className="text-[10px] font-bold">4.8</span>
                 </div>
               </div>
-              <h1 className="text-white text-3xl md:text-6xl font-black italic tracking-tighter leading-none">{product.name}</h1>
+              <h1 className="text-slate-900 dark:text-white text-3xl md:text-6xl font-black italic tracking-tighter leading-none">{product.name}</h1>
               <div className="flex items-baseline gap-4 mt-6">
                 <h3 className="text-primary text-3xl md:text-5xl font-black tracking-tight">৳{product.price.toFixed(2)}</h3>
                 {product.originalPrice && (
@@ -101,8 +101,8 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
                       key={color}
                       onClick={() => setSelectedColor(color)}
                       className={`size-10 md:size-12 rounded-full shadow-lg transition-all ${color === 'Neon' ? 'bg-primary' :
-                          color === 'Blue' ? 'bg-blue-500' :
-                            color === 'Pink' ? 'bg-pink-500' : 'bg-slate-900'
+                        color === 'Blue' ? 'bg-blue-500' :
+                          color === 'Pink' ? 'bg-pink-500' : 'bg-slate-900'
                         } ${selectedColor === color ? 'ring-4 ring-primary/20 ring-offset-4 ring-offset-background-dark scale-110' : 'hover:scale-105 opacity-80'}`}
                     ></button>
                   ))}
@@ -120,8 +120,8 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={`flex-shrink-0 min-w-[56px] h-14 rounded-xl border-2 flex items-center justify-center font-black transition-all ${selectedSize === size
-                          ? 'border-primary bg-primary text-white shadow-xl shadow-primary/20 scale-105'
-                          : 'border-white/5 text-slate-500 hover:border-white/10 hover:text-white'
+                        ? 'border-primary bg-primary text-white shadow-xl shadow-primary/20 scale-105'
+                        : 'border-white/5 text-slate-500 hover:border-white/10 hover:text-white'
                         }`}
                     >
                       {size}
@@ -131,9 +131,9 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
               </div>
 
               <div>
-                <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-3 text-slate-500">Description</h4>
-                <p className="text-slate-400 text-sm md:text-base leading-relaxed font-medium">
-                  Elevate your style with our signature <span className="text-white">{product.name}</span>. Crafted from premium materials with a vibrant finish. Each piece is meticulously checked for quality. Perfect for any occasion where you want to stand out.
+                <h4 className="text-slate-500 font-black text-xs uppercase tracking-[0.2em] mb-3">Description</h4>
+                <p className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed font-medium">
+                  Elevate your style with our signature <span className="text-slate-900 dark:text-white">{product.name}</span>. Crafted from premium materials with a vibrant finish. Each piece is meticulously checked for quality. Perfect for any occasion where you want to stand out.
                 </p>
               </div>
 
@@ -141,7 +141,7 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
               <div className="hidden md:flex gap-4 pt-6">
                 <button
                   onClick={() => setScreen('try-on')}
-                  className="flex-1 bg-white text-slate-900 h-16 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl hover:bg-slate-200 active:scale-[0.98] transition-all"
+                  className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-16 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl hover:opacity-90 active:scale-[0.98] transition-all"
                 >
                   <Sparkles className="size-5" />
                   Try in Room
@@ -160,11 +160,11 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
       </main>
 
       {/* Mobile Footer Actions */}
-      <div className="fixed bottom-0 w-full z-40 bg-background-dark/95 backdrop-blur-xl border-t border-primary/10 p-4 pb-8 md:hidden">
+      <div className="fixed bottom-0 w-full z-40 bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-primary/10 p-4 pb-8 md:hidden">
         <div className="flex gap-3">
           <button
             onClick={() => setScreen('try-on')}
-            className="flex-1 bg-white text-slate-900 h-14 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
+            className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-14 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
           >
             <Sparkles className="size-5" />
             Try

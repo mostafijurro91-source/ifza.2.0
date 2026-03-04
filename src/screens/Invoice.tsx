@@ -6,16 +6,16 @@ import { Screen, Order } from '../types';
 export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) => void, order: Order | null }) {
   if (!order) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-background-dark text-white">
-        <p>Order not found</p>
-        <button onClick={() => setScreen('home')} className="ml-4 text-primary underline">Go Home</button>
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+        <p className="text-xl font-bold">Order not found</p>
+        <button onClick={() => setScreen('home')} className="mt-6 text-primary font-black uppercase tracking-widest border-b-2 border-primary">Go Home</button>
       </div>
     );
   }
 
   return (
-    <div className="relative flex h-[100dvh] w-full flex-col bg-background-dark text-white overflow-hidden">
-      <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-primary/10 p-4 flex items-center justify-between">
+    <div className="relative flex h-[100dvh] w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-hidden transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/10 p-4 flex items-center justify-between">
         <button onClick={() => setScreen('orders')} className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
           <ChevronLeft className="size-6" />
         </button>
@@ -30,7 +30,7 @@ export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) =
           <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
             <span className="text-white font-bold text-2xl tracking-tighter">ifza</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Order Details</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Order Details</h1>
           <p className="text-primary/60 text-sm font-medium">Order {order.id}</p>
         </div>
 
@@ -39,7 +39,7 @@ export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) =
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs uppercase tracking-wider text-primary/40 font-bold mb-1">Date</p>
-                <p className="text-sm font-semibold text-white">{order.date}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{order.date}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs uppercase tracking-wider text-primary/40 font-bold mb-1">Status</p>
@@ -47,7 +47,7 @@ export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) =
               </div>
               <div className="col-span-2 pt-2">
                 <p className="text-xs uppercase tracking-wider text-primary/40 font-bold mb-1">Customer</p>
-                <p className="text-sm font-semibold text-white leading-relaxed">
+                <p className="text-sm font-semibold text-slate-900 dark:text-white leading-relaxed">
                   {order.customerName}
                   {order.phone && <><br />{order.phone}</>}
                   {order.shippingAddress && <><br />{order.shippingAddress}</>}
@@ -56,7 +56,7 @@ export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) =
               {order.paymentMethod && (
                 <div className="col-span-2 pt-2 border-t border-primary/10 mt-2">
                   <p className="text-xs uppercase tracking-wider text-primary/40 font-bold mb-1">Payment Method</p>
-                  <p className="text-sm font-semibold text-white">{order.paymentMethod}</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{order.paymentMethod}</p>
                 </div>
               )}
             </div>
@@ -80,12 +80,12 @@ export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) =
                     details = `Custom Design (${item.customDesign.color})`;
                   }
                   return (
-                    <InvoiceRow 
+                    <InvoiceRow
                       key={idx}
-                      name={item.name} 
-                      details={details} 
-                      qty={item.quantity} 
-                      price={`৳${(item.price * item.quantity).toFixed(2)}`} 
+                      name={item.name}
+                      details={details}
+                      qty={item.quantity}
+                      price={`৳${(item.price * item.quantity).toFixed(2)}`}
                     />
                   );
                 })}
@@ -95,7 +95,7 @@ export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) =
               <SummaryRow label="Subtotal" value={`৳${order.total.toFixed(2)}`} />
               <SummaryRow label="Shipping" value="FREE" isFree />
               <div className="pt-2 mt-2 border-t border-primary/20 flex justify-between items-center">
-                <span className="text-base font-bold text-white">Grand Total</span>
+                <span className="text-base font-bold text-slate-900 dark:text-white">Grand Total</span>
                 <span className="text-xl font-bold text-primary">৳{order.total.toFixed(2)}</span>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function Invoice({ setScreen, order }: { setScreen: (s: Screen) =
             <Download className="size-5" />
             <span>Download PDF</span>
           </button>
-          <button 
+          <button
             onClick={() => setScreen('home')}
             className="flex items-center justify-center gap-2 bg-slate-100 text-slate-900 font-bold py-4 rounded-xl active:scale-95 transition-transform"
           >
@@ -133,11 +133,11 @@ function InvoiceRow({ name, details, qty, price }: { name: string, details: stri
   return (
     <tr>
       <td className="px-4 py-4">
-        <p className="font-bold text-white">{name}</p>
+        <p className="font-bold text-slate-900 dark:text-white">{name}</p>
         <p className="text-xs text-primary/60 italic">{details}</p>
       </td>
-      <td className="px-4 py-4 text-center text-white">{qty}</td>
-      <td className="px-4 py-4 text-right font-semibold text-white">{price}</td>
+      <td className="px-4 py-4 text-center text-slate-900 dark:text-white">{qty}</td>
+      <td className="px-4 py-4 text-right font-semibold text-slate-900 dark:text-white">{price}</td>
     </tr>
   );
 }
@@ -146,7 +146,7 @@ function SummaryRow({ label, value, isFree }: { label: string, value: string, is
   return (
     <div className="flex justify-between text-sm">
       <span className="text-primary/60">{label}</span>
-      <span className={`font-medium ${isFree ? 'text-green-400' : 'text-white'}`}>{value}</span>
+      <span className={`font-medium ${isFree ? 'text-green-500' : 'text-slate-900 dark:text-white'}`}>{value}</span>
     </div>
   );
 }
