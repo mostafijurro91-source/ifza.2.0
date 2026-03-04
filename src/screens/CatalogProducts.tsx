@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ChevronLeft, Search, Filter } from 'lucide-react';
+import { ChevronLeft, Search, Filter, Sparkles, ShoppingBag } from 'lucide-react';
 import { Screen, Product, Catalog } from '../types';
 
 export default function CatalogProducts({ setScreen, catalog, products }: { setScreen: (s: Screen, p?: Product) => void, catalog: Catalog | null, products: Product[] }) {
@@ -41,6 +41,22 @@ export default function CatalogProducts({ setScreen, catalog, products }: { setS
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setScreen('product', product); }}
+                    className="size-8 bg-white rounded-full flex items-center justify-center text-slate-900 shadow-xl"
+                  >
+                    <ShoppingBag className="size-4" />
+                  </button>
+                  {product.isVirtualReady && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setScreen('try-on', product); }}
+                      className="size-8 bg-primary rounded-full flex items-center justify-center text-white shadow-xl"
+                    >
+                      <Sparkles className="size-4" />
+                    </button>
+                  )}
+                </div>
               </div>
               <h3 className="font-medium text-sm text-slate-900 dark:text-white truncate">{product.name}</h3>
               <div className="flex items-center gap-2 mt-1">

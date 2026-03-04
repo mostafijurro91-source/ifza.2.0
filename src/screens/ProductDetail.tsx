@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { ChevronLeft, Share2, Heart, Star, Sparkles, ShoppingBag } from 'lucide-react';
 import { Screen, Product } from '../types';
 
-export default function ProductDetail({ setScreen, product, onAddToCart }: { setScreen: (s: Screen) => void, product: Product | null, onAddToCart: (p: Product, size: string, color: string) => void }) {
+export default function ProductDetail({ setScreen, product, onAddToCart }: { setScreen: (s: Screen, p?: Product) => void, product: Product | null, onAddToCart: (p: Product, size: string, color: string) => void }) {
   const [isAdded, setIsAdded] = React.useState(false);
   const [selectedSize, setSelectedSize] = React.useState('S');
   const [selectedColor, setSelectedColor] = React.useState('Neon');
@@ -140,7 +140,7 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
               {/* Desktop Actions */}
               <div className="hidden md:flex gap-4 pt-6">
                 <button
-                  onClick={() => setScreen('try-on')}
+                  onClick={() => setScreen('try-on', product)}
                   className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-16 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl hover:opacity-90 active:scale-[0.98] transition-all"
                 >
                   <Sparkles className="size-5" />
@@ -163,7 +163,7 @@ export default function ProductDetail({ setScreen, product, onAddToCart }: { set
       <div className="fixed bottom-0 w-full z-40 bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-primary/10 p-4 pb-8 md:hidden">
         <div className="flex gap-3">
           <button
-            onClick={() => setScreen('try-on')}
+            onClick={() => setScreen('try-on', product)}
             className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-14 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
           >
             <Sparkles className="size-5" />

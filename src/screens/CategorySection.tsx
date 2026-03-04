@@ -220,15 +220,33 @@ function CategoryCard({ image, name, items }: { image: string, name: string, ite
 
 function TrendingItem({ product, onClick }: { product: Product, onClick?: (p: Product) => void }) {
   return (
-    <div className="flex-none w-40 bg-slate-800 rounded-lg p-2 cursor-pointer" onClick={() => onClick?.(product)}>
-      <div className="w-full aspect-square rounded-md bg-slate-700 mb-2 overflow-hidden">
-        <img src={product.image} alt={product.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+    <div className="flex-none w-48 group bg-white dark:bg-slate-900 rounded-2xl p-3 cursor-pointer border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-primary/50" onClick={() => onClick?.(product)}>
+      <div className="relative w-full aspect-[3/4] rounded-xl bg-slate-100 dark:bg-slate-800 mb-3 overflow-hidden">
+        <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" referrerPolicy="no-referrer" />
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+          <button
+            onClick={(e) => { e.stopPropagation(); onClick?.(product); }}
+            className="size-10 bg-white rounded-full flex items-center justify-center text-slate-900 shadow-xl"
+          >
+            <ShoppingBag className="size-4" />
+          </button>
+          {product.isVirtualReady && (
+            <button
+              onClick={(e) => { e.stopPropagation(); (window as any).navigate?.('try-on', product); }}
+              className="size-10 bg-primary rounded-full flex items-center justify-center text-white shadow-xl"
+            >
+              <Sparkles className="size-4" />
+            </button>
+          )}
+        </div>
       </div>
-      <p className="text-xs font-bold truncate">{product.name}</p>
-      <p className="text-sm font-bold text-primary">
-        ৳{product.price.toFixed(2)}
-        {product.originalPrice && <span className="text-[10px] text-slate-500 line-through ml-1">৳{product.originalPrice.toFixed(2)}</span>}
-      </p>
+      <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{product.name}</p>
+      <div className="flex items-center justify-between mt-1">
+        <p className="text-sm font-black text-primary">৳{product.price.toFixed(2)}</p>
+        {product.isVirtualReady && (
+          <Sparkles className="size-3 text-primary animate-pulse" />
+        )}
+      </div>
     </div>
   );
 }

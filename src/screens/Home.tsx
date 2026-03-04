@@ -232,9 +232,25 @@ export default function HomeDashboard({ setScreen, cartCount }: { setScreen: (s:
 
 function TrendingItem({ product, onClick }: { product: Product, onClick?: (p: Product) => void }) {
   return (
-    <div className="flex flex-col gap-2 cursor-pointer" onClick={() => onClick?.(product)}>
+    <div className="flex flex-col gap-2 group cursor-pointer" onClick={() => onClick?.(product)}>
       <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-surface-dark">
-        <img className="h-full w-full object-cover" src={product.image} alt={product.name} referrerPolicy="no-referrer" />
+        <img className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" src={product.image} alt={product.name} referrerPolicy="no-referrer" />
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+          <button
+            onClick={(e) => { e.stopPropagation(); onClick?.(product); }}
+            className="size-10 bg-white rounded-full flex items-center justify-center text-slate-900 shadow-xl"
+          >
+            <ShoppingBag className="size-4" />
+          </button>
+          {product.isVirtualReady && (
+            <button
+              onClick={(e) => { e.stopPropagation(); (window as any).navigate?.('try-on', product); }}
+              className="size-10 bg-primary rounded-full flex items-center justify-center text-white shadow-xl"
+            >
+              <Sparkles className="size-4" />
+            </button>
+          )}
+        </div>
         <button className="absolute top-2 right-2 glass flex h-8 w-8 items-center justify-center rounded-full text-white">
           <Heart className="size-4" />
         </button>

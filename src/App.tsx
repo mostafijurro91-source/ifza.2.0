@@ -98,8 +98,8 @@ export default function App() {
   });
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [selectedCatalog, setSelectedCatalog] = useState<Catalog | null>(null);
 
   const [catalogs, setCatalogs] = useState<Catalog[]>(INITIAL_CATALOGS);
@@ -139,7 +139,7 @@ export default function App() {
   const handleAdminLogin = (u: string, p: string) => {
     if (u === 'admin' && p === 'ifza2026') {
       setIsAdminLoggedIn(true);
-      setScreen('admin');
+      navigate('admin');
       return true;
     }
     return false;
@@ -147,7 +147,7 @@ export default function App() {
 
   const handleAdminLogout = () => {
     setIsAdminLoggedIn(false);
-    setScreen('home');
+    navigate('home');
   };
 
   const addToCart = (product: Product, size: string, color: string) => {
@@ -197,10 +197,10 @@ export default function App() {
 
     setOrders(prev => [newOrder, ...prev]);
     setCart([]);
-    setScreen('invoice');
+    navigate('invoice');
   };
 
-  const navigateWithAuth = (target: Screen, product?: Product, catalog?: Catalog) => {
+  const navigate = (target: Screen, product?: Product, catalog?: Catalog) => {
     // Scroll to top on every navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -225,6 +225,11 @@ export default function App() {
     setScreen(target);
   };
 
+  // Expose navigate globally for hacky access if needed (optional, but used in some components)
+  useEffect(() => {
+    (window as any).navigate = navigate;
+  }, [navigate]);
+
   const NavItems = [
     { id: 'home' as Screen, label: 'Home', icon: <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
     { id: 'discover' as Screen, label: 'Discover', icon: <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg> },
@@ -237,66 +242,66 @@ export default function App() {
       case 'splash':
         return <Splash onComplete={() => setScreen('home')} />;
       case 'login':
-        return <Login setScreen={setScreen} onLogin={handleLogin} />;
+        return <Login setScreen={navigate} onLogin={handleLogin} />;
       case 'signup':
-        return <Signup setScreen={setScreen} onSignup={handleLogin} />;
+        return <Signup setScreen={navigate} onSignup={handleLogin} />;
       case 'admin-login':
-        return <AdminLogin setScreen={setScreen} onAdminLogin={handleAdminLogin} />;
+        return <AdminLogin setScreen={navigate} onAdminLogin={handleAdminLogin} />;
       case 'home':
-        return <Home setScreen={navigateWithAuth} cartCount={cartCount} />;
+        return <Home setScreen={navigate} cartCount={cartCount} />;
       case 'baby':
-        return <BabySection setScreen={navigateWithAuth} />;
+        return <BabySection setScreen={navigate} />;
       case 'women':
       case 'men':
       case 'shoes':
       case 'accs':
       case 'discover':
-        return <CategorySection setScreen={navigateWithAuth} category={screen} catalogs={catalogs} />;
+        return <CategorySection setScreen={navigate} category={screen} catalogs={catalogs} />;
       case 'catalog-products':
         if (selectedCatalog?.id === 'c24') {
-          return <CustomTShirt setScreen={navigateWithAuth} addToCart={addCustomToCart} />;
+          return <CustomTShirt setScreen={navigate} addToCart={addCustomToCart} />;
         }
-        return <CatalogProducts setScreen={navigateWithAuth} catalog={selectedCatalog} products={products} />;
+        return <CatalogProducts setScreen={navigate} catalog={selectedCatalog} products={products} />;
       case 'custom-tshirt':
-        return <CustomTShirt setScreen={navigateWithAuth} addToCart={addCustomToCart} />;
+        return <CustomTShirt setScreen={navigate} addToCart={addCustomToCart} />;
       case 'product':
         return <ProductDetail
-          setScreen={navigateWithAuth}
+          setScreen={navigate}
           product={selectedProduct}
           onAddToCart={addToCart}
         />;
       case 'try-on':
-        return <VirtualFittingRoom setScreen={navigateWithAuth} />;
+        return <VirtualFittingRoom setScreen={navigate} />;
       case 'cart':
         return <Cart
-          setScreen={navigateWithAuth}
+          setScreen={navigate}
           cart={cart}
           onRemove={removeFromCart}
           onUpdateQuantity={updateQuantity}
           onCheckout={checkout}
         />;
       case 'profile':
-        return <Profile setScreen={navigateWithAuth} user={user} onLogout={handleLogout} />;
+        return <Profile setScreen={navigate} user={user} onLogout={handleLogout} />;
       case 'admin':
-        return <AdminDashboard setScreen={navigateWithAuth} onLogout={handleAdminLogout} />;
+        return <AdminDashboard setScreen={navigate} onLogout={handleAdminLogout} />;
       case 'admin-inventory':
-        return <AdminInventory setScreen={navigateWithAuth} />;
+        return <AdminInventory setScreen={navigate} />;
       case 'admin-orders':
-        return <AdminOrders setScreen={navigateWithAuth} orders={orders} />;
+        return <AdminOrders setScreen={navigate} orders={orders} />;
       case 'admin-marketing':
-        return <AdminMarketing setScreen={navigateWithAuth} />;
+        return <AdminMarketing setScreen={navigate} />;
       case 'admin-analytics':
-        return <AdminAnalytics setScreen={navigateWithAuth} />;
+        return <AdminAnalytics setScreen={navigate} />;
       case 'admin-catalogs':
-        return <AdminCatalogs setScreen={navigateWithAuth} catalogs={catalogs} setCatalogs={setCatalogs} />;
+        return <AdminCatalogs setScreen={navigate} catalogs={catalogs} setCatalogs={setCatalogs} />;
       case 'add-product':
-        return <AddProduct setScreen={navigateWithAuth} catalogs={catalogs} addProduct={(p) => setProducts([...products, p])} />;
+        return <AddProduct setScreen={navigate} catalogs={catalogs} addProduct={(p) => setProducts([...products, p])} />;
       case 'orders':
-        return <Orders setScreen={navigateWithAuth} orders={orders} />;
+        return <Orders setScreen={navigate} orders={orders} />;
       case 'invoice':
-        return <Invoice setScreen={navigateWithAuth} order={orders[0]} />;
+        return <Invoice setScreen={navigate} order={orders[0]} />;
       default:
-        return <Home setScreen={navigateWithAuth} cartCount={cartCount} />;
+        return <Home setScreen={navigate} cartCount={cartCount} />;
     }
   };
 

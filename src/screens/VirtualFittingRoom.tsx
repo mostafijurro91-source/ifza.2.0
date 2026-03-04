@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, Share2, Rotate3d, Camera, Check, PlusCircle, Accessibility, Footprints, Glasses, Watch, Home, Search, ShoppingCart, User, Wand2, Sparkles, Shirt, Baby, Ghost } from 'lucide-react';
-import { Screen } from '../types';
+import { Screen, Product } from '../types';
 
 type Category = 'Tops' | 'Bottoms' | 'Shoes' | 'Glasses' | 'Toys';
 
@@ -13,14 +13,14 @@ interface SelectedItems {
   Toys: string | null;
 }
 
-export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Screen) => void }) {
-  const [activeTab, setActiveTab] = useState('Outfits');
+export default function VirtualFittingRoom({ setScreen, initialProduct }: { setScreen: (s: Screen, p?: Product) => void, initialProduct?: Product | null }) {
+  const [activeTab, setActiveTab] = useState(initialProduct ? 'Outfits' : 'Avatar');
   const [selectedItems, setSelectedItems] = useState<SelectedItems>({
-    Tops: 'Neon Bomber',
+    Tops: initialProduct?.category === 'women' || initialProduct?.category === 'men' ? initialProduct.name : 'Neon Bomber',
     Bottoms: null,
     Shoes: null,
     Glasses: null,
-    Toys: null,
+    Toys: initialProduct?.category === 'baby' ? initialProduct.name : null,
   });
   const [isRendering, setIsRendering] = useState(false);
   const [isRendered, setIsRendered] = useState(false);
@@ -106,8 +106,16 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
                     <div className="relative">
                       <div className="size-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
                       <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-8 text-primary animate-pulse" />
+                      {/* Scanning Line Effect */}
+                      <motion.div
+                        initial={{ top: 0 }}
+                        animate={{ top: '100%' }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                        className="absolute left-0 right-0 h-1 bg-primary/40 shadow-[0_0_15px_rgba(242,127,13,0.8)] z-40"
+                      />
                     </div>
                     <p className="mt-6 text-primary font-black tracking-[0.2em] uppercase text-[10px]">AI Fitting in progress...</p>
+                    <p className="mt-2 text-white/60 text-[12px] font-medium">AI এর সাহায্যে আপনার লুক তৈরি হচ্ছে...</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -138,10 +146,15 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
               <div className="absolute bottom-8 left-8 right-8">
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 bg-primary text-white text-[10px] font-black rounded-full uppercase tracking-widest animate-pulse">Live AI</span>
-                    <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Active Look #2026</span>
+                    <span className="px-3 py-1 bg-primary text-white text-[10px] font-black rounded-full uppercase tracking-widest animate-pulse">Live AI API</span>
+                    <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Gemini Powered</span>
                   </div>
-                  <h3 className="text-slate-900 dark:text-white text-2xl md:text-3xl font-black italic tracking-tighter uppercase leading-none">Fit Preview</h3>
+                  <h3 className="text-slate-900 dark:text-white text-2xl md:text-3xl font-black italic tracking-tighter uppercase leading-none">
+                    {isRendered ? 'AI Matching Result' : 'Fit Preview'}
+                    <span className="block text-xs normal-case font-medium text-slate-500 mt-1">
+                      {isRendered ? 'AI সফলভাবে আপনার লুক তৈরি করেছে' : 'আপনার পছন্দমতো পোশাক পরুন'}
+                    </span>
+                  </h3>
                 </div>
               </div>
             </div>
@@ -154,7 +167,7 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
                 className="w-full bg-primary hover:bg-primary/90 text-white font-black py-5 px-8 rounded-2xl shadow-2xl shadow-primary/20 flex items-center justify-center gap-4 active-glow transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm"
               >
                 <Wand2 className={`size-6 ${isRendering ? 'animate-spin' : ''}`} />
-                {isRendering ? 'Rendering your style...' : 'Render AI Fit'}
+                {isRendering ? 'AI Processing...' : 'AI এর সাহায্যে দেখুন (Generate Look)'}
               </button>
             </div>
           </div>
@@ -173,13 +186,13 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
                   <Camera className="size-10" />
                 </div>
                 <div>
-                  <h3 className="text-slate-900 dark:text-white text-2xl font-black italic uppercase tracking-tighter mb-2">Upload Your Photo</h3>
-                  <p className="text-sm text-slate-400 max-w-xs mx-auto">For pixel-perfect AI results, upload a well-lit photo of the person who will wear these styles.</p>
+                  <h3 className="text-slate-900 dark:text-white text-2xl font-black italic uppercase tracking-tighter mb-2">আপনার ছবি দিন (Upload Photo)</h3>
+                  <p className="text-sm text-slate-400 max-w-xs mx-auto">AI এর মাধ্যমে সঠিক আউটফিট দেখতে আপনার একটি ফুলবডি ছবি আপলোড করুন।</p>
                 </div>
 
                 <label className="w-full max-w-xs relative cursor-pointer group">
                   <div className="w-full py-4 bg-primary text-white text-sm font-black rounded-2xl text-center shadow-2xl shadow-primary/20 group-hover:bg-primary/90 transition-all uppercase tracking-widest">
-                    Choose Image
+                    ছবি সিলেক্ট করুন (Choose)
                   </div>
                   <input
                     type="file"
@@ -192,7 +205,7 @@ export default function VirtualFittingRoom({ setScreen }: { setScreen: (s: Scree
             ) : (
               <section className="space-y-10">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-slate-900 dark:text-white text-xl md:text-2xl font-black italic uppercase tracking-tighter">Wardrobe (জামা ও খেলনা)</h3>
+                  <h3 className="text-slate-900 dark:text-white text-xl md:text-2xl font-black italic uppercase tracking-tighter">আপনার আলমারি (Wardrobe)</h3>
                   <button
                     onClick={() => setSelectedItems({ Tops: null, Bottoms: null, Shoes: null, Glasses: null, Toys: null })}
                     className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:text-primary transition-colors border-b border-white/10"

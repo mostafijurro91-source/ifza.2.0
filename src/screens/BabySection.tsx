@@ -180,16 +180,31 @@ function TrendingBabyItem({ product, onClick }: { product: Product, onClick?: (p
     <div className="group flex flex-col gap-4 cursor-pointer" onClick={() => onClick?.(product)}>
       <div className="relative aspect-square rounded-[2rem] bg-slate-800 overflow-hidden border border-white/5 shadow-2xl">
         <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" referrerPolicy="no-referrer" />
-        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+          <button
+            onClick={(e) => { e.stopPropagation(); onClick?.(product); }}
+            className="size-10 bg-white rounded-full flex items-center justify-center text-slate-900 shadow-xl"
+          >
+            <ShoppingBag className="size-4" />
+          </button>
+          {product.isVirtualReady && (
+            <button
+              onClick={(e) => { e.stopPropagation(); (window as any).navigate?.('try-on', product); }}
+              className="size-10 bg-primary rounded-full flex items-center justify-center text-white shadow-xl"
+            >
+              <Sparkles className="size-4" />
+            </button>
+          )}
+        </div>
         {product.isVirtualReady && (
-          <div className="absolute bottom-3 left-3 bg-accent-blue text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg flex items-center gap-1 shadow-lg">
+          <div className="absolute bottom-3 left-3 bg-accent-blue text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg flex items-center gap-1 shadow-lg z-10">
             <Sparkles className="size-2" />
             AR Ready
           </div>
         )}
       </div>
       <div className="px-1">
-        <p className="text-sm font-black italic uppercase tracking-tighter text-white truncate">{product.name}</p>
+        <p className="text-sm font-black italic uppercase tracking-tighter text-slate-900 dark:text-white truncate">{product.name}</p>
         <p className="text-sm font-black text-primary mt-1">৳{product.price.toFixed(2)}</p>
       </div>
     </div>
