@@ -16,7 +16,7 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
 
   const handleSave = () => {
     if (!formData.name || !formData.price || !formData.image) return;
-    
+
     setIsSaving(true);
     setTimeout(() => {
       addProduct({
@@ -39,13 +39,13 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
   };
 
   return (
-    <div className="relative flex h-[100dvh] w-full flex-col bg-background-dark text-white overflow-hidden">
-      <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md p-4 flex items-center justify-between border-b border-primary/10">
-        <button onClick={() => setScreen('admin')} className="text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+    <div className="relative flex h-[100dvh] w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-hidden transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-4 flex items-center justify-between border-b border-slate-200 dark:border-primary/10">
+        <button onClick={() => setScreen('admin')} className="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
           <ChevronLeft className="size-6" />
         </button>
-        <h2 className="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Add New Product</h2>
-        <button 
+        <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Add New Product</h2>
+        <button
           onClick={handleSave}
           disabled={isSaving}
           className="text-primary font-bold hover:opacity-80 transition-opacity disabled:opacity-50"
@@ -59,9 +59,9 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
           <h3 className="text-lg font-bold mb-4">Product Images</h3>
           <div className="flex gap-4 overflow-x-auto no-scrollbar">
             <div className="relative flex-none w-32 aspect-[3/4] rounded-xl overflow-hidden border border-primary/20">
-              <img 
-                src={formData.image} 
-                alt="Product" 
+              <img
+                src={formData.image}
+                alt="Product"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -83,31 +83,31 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Product Name</label>
-              <input 
+              <input
                 value={formData.name}
-                onChange={e => setFormData({...formData, name: e.target.value})}
-                className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors" 
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors"
                 placeholder="e.g. Summer Silk Dress"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Price (৳)</label>
-                <input 
+                <input
                   type="number"
                   value={formData.price || ''}
-                  onChange={e => setFormData({...formData, price: Number(e.target.value)})}
-                  className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors" 
+                  onChange={e => setFormData({ ...formData, price: Number(e.target.value) })}
+                  className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors"
                   placeholder="0.00"
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Original Price (৳)</label>
-                <input 
+                <input
                   type="number"
                   value={formData.originalPrice || ''}
-                  onChange={e => setFormData({...formData, originalPrice: Number(e.target.value)})}
-                  className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors" 
+                  onChange={e => setFormData({ ...formData, originalPrice: Number(e.target.value) })}
+                  className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors"
                   placeholder="Optional"
                 />
               </div>
@@ -116,9 +116,9 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
               <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
                 {['women', 'men', 'baby', 'shoes', 'accs'].map(cat => (
-                  <button 
+                  <button
                     key={cat}
-                    onClick={() => setFormData({...formData, category: cat, catalogId: ''})}
+                    onClick={() => setFormData({ ...formData, category: cat, catalogId: '' })}
                     className={`flex-none px-4 py-2 font-bold rounded-xl capitalize ${formData.category === cat ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-primary/5 border border-primary/10 text-slate-400'}`}
                   >
                     {cat}
@@ -129,10 +129,10 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
             {catalogs.filter(c => c.parentCategory === formData.category).length > 0 && (
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Catalog</label>
-                <select 
+                <select
                   value={formData.catalogId || ''}
-                  onChange={e => setFormData({...formData, catalogId: e.target.value})}
-                  className="w-full bg-background-dark border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors text-white"
+                  onChange={e => setFormData({ ...formData, catalogId: e.target.value })}
+                  className="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors text-slate-900 dark:text-white"
                 >
                   <option value="">Select Catalog</option>
                   {catalogs.filter(c => c.parentCategory === formData.category).map(c => (
@@ -143,10 +143,10 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
             )}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Image URL</label>
-              <input 
+              <input
                 value={formData.image}
-                onChange={e => setFormData({...formData, image: e.target.value})}
-                className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors" 
+                onChange={e => setFormData({ ...formData, image: e.target.value })}
+                className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors"
                 placeholder="https://..."
               />
             </div>
@@ -168,8 +168,8 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
 
         <section className="space-y-2">
           <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
-          <textarea 
-            className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm h-32 focus:outline-none focus:border-primary transition-colors resize-none" 
+          <textarea
+            className="w-full bg-primary/5 border border-primary/10 rounded-xl py-4 px-4 text-sm h-32 focus:outline-none focus:border-primary transition-colors resize-none"
             placeholder="Describe the material, fit, and style..."
           ></textarea>
         </section>
@@ -177,7 +177,7 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
 
       <AnimatePresence>
         {showSuccess && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
@@ -189,7 +189,7 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#0a0a0f] border-t border-white/5 pb-8 pt-3 px-6 flex justify-between items-center z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#0a0a0f] border-t border-slate-200 dark:border-white/5 pb-8 pt-3 px-6 flex justify-between items-center z-50 transition-colors duration-300">
         <AdminNavItem icon={<LayoutDashboard className="size-5" />} label="Overview" onClick={() => setScreen('admin')} />
         <AdminNavItem icon={<Package className="size-5 text-blue-500" />} label="Inventory" active onClick={() => setScreen('admin-inventory')} />
         <AdminNavItem icon={<ReceiptText className="size-5" />} label="Orders" onClick={() => setScreen('admin-orders')} />
