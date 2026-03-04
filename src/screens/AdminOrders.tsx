@@ -20,8 +20,8 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
-      <header className="p-4 flex items-center gap-4 border-b border-white/5 sticky top-0 bg-[#0a0a0f]/80 backdrop-blur-md z-10">
+    <div className="min-h-screen bg-background-light dark:bg-[#0a0a0f] text-slate-900 dark:text-white flex flex-col transition-colors duration-300">
+      <header className="p-4 flex items-center gap-4 border-b border-slate-200 dark:border-white/5 sticky top-0 bg-white/80 dark:bg-[#0a0a0f]/80 backdrop-blur-md z-10">
         <button onClick={() => setScreen('admin')} className="size-10 flex items-center justify-center bg-white/5 rounded-xl">
           <ChevronLeft className="size-6" />
         </button>
@@ -31,13 +31,13 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
       <main className="flex-1 p-4 space-y-6">
         <div className="flex gap-3">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
-            <input 
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500" 
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+            <input
+              className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 transition-colors"
               placeholder="Search orders, customers..."
             />
           </div>
-          <button className="px-4 bg-white/5 border border-white/10 rounded-xl flex items-center gap-2 font-bold text-sm">
+          <button className="px-4 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl flex items-center gap-2 font-bold text-sm text-slate-600 dark:text-white">
             <FileText className="size-4" /> Export
           </button>
         </div>
@@ -49,10 +49,10 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
               <div className="text-center py-10 text-slate-500">No orders found.</div>
             ) : (
               orders.map(order => (
-                <motion.div 
+                <motion.div
                   layout
-                  key={order.id} 
-                  className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:bg-white/10 transition-colors"
+                  key={order.id}
+                  className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/10 transition-colors shadow-sm"
                   onClick={() => setSelectedOrder(order)}
                 >
                   <div className="size-14 rounded-xl overflow-hidden bg-slate-800 shrink-0 relative">
@@ -63,15 +63,14 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-1">
                       <h3 className="font-bold text-sm truncate">{order.id}</h3>
-                      <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
-                        order.status === 'Delivered' ? 'text-green-400 bg-green-400/10' : 
-                        order.status === 'Pending' ? 'text-orange-400 bg-orange-400/10' : 
-                        'text-blue-400 bg-blue-400/10'
-                      }`}>
+                      <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${order.status === 'Delivered' ? 'text-green-400 bg-green-400/10' :
+                          order.status === 'Pending' ? 'text-orange-400 bg-orange-400/10' :
+                            'text-blue-400 bg-blue-400/10'
+                        }`}>
                         {order.status}
                       </span>
                     </div>
@@ -81,7 +80,7 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
                         <p className="text-[10px] text-slate-500">{order.date} • {order.items.length} items</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-bold text-white">৳{order.total.toFixed(2)}</p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">৳{order.total.toFixed(2)}</p>
                       </div>
                     </div>
                   </div>
@@ -95,13 +94,13 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
       {/* Order Details Modal */}
       <AnimatePresence>
         {selectedOrder && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               className="w-full max-w-md bg-[#12121a] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
@@ -155,7 +154,7 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
                               Color: <span className="inline-block w-4 h-4 rounded-full border border-white/20" style={{ backgroundColor: item.customDesign.color }}></span>
                             </div>
                           </div>
-                          
+
                           {(item.customDesign.frontText || item.customDesign.backText) && (
                             <div className="bg-black/20 rounded-lg p-3 text-xs space-y-1">
                               {item.customDesign.frontText && <p><span className="text-slate-500">Front Text:</span> "{item.customDesign.frontText}"</p>}
@@ -207,7 +206,7 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
 
               <div className="p-6 border-t border-white/5 bg-[#12121a] shrink-0">
                 <div className="grid grid-cols-2 gap-3">
-                  <button 
+                  <button
                     onClick={() => {
                       alert('Order status updated to Accepted!');
                       setSelectedOrder(null);
@@ -225,7 +224,7 @@ export default function AdminOrders({ setScreen, orders }: { setScreen: (s: Scre
           </motion.div>
         )}
       </AnimatePresence>
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#0a0a0f] border-t border-white/5 pb-8 pt-3 px-6 flex justify-between items-center z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-[#0a0a0f]/95 border-t border-slate-200 dark:border-white/5 pb-8 pt-3 px-6 flex justify-between items-center z-50 transition-colors duration-300">
         <AdminNavItem icon={<LayoutDashboard className="size-5" />} label="Overview" onClick={() => setScreen('admin')} />
         <AdminNavItem icon={<Package className="size-5" />} label="Inventory" onClick={() => setScreen('admin-inventory')} />
         <AdminNavItem icon={<ReceiptText className="size-5 text-blue-500" />} label="Orders" active onClick={() => setScreen('admin-orders')} />

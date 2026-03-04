@@ -11,12 +11,12 @@ interface CustomTShirtProps {
 export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps) {
   const [side, setSide] = useState<'front' | 'back'>('front');
   const [color, setColor] = useState('#ffffff');
-  
+
   const [frontText, setFrontText] = useState('');
   const [backText, setBackText] = useState('');
   const [frontImage, setFrontImage] = useState<string | null>(null);
   const [backImage, setBackImage] = useState<string | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,24 +63,24 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-50 max-w-[430px] mx-auto shadow-2xl relative">
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <div className="flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark max-w-[430px] mx-auto shadow-2xl relative transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-white/5">
         <div className="flex items-center p-4 justify-between">
-          <button onClick={() => setScreen('home')} className="flex size-10 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
-            <ChevronLeft className="size-6 text-slate-800" />
+          <button onClick={() => setScreen('home')} className="flex size-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <ChevronLeft className="size-6 text-slate-800 dark:text-white" />
           </button>
-          <h1 className="text-lg font-bold text-slate-800">Design Your T-Shirt</h1>
+          <h1 className="text-lg font-bold text-slate-800 dark:text-white">Design Your T-Shirt</h1>
           <div className="size-10"></div>
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto pb-24">
         {/* T-Shirt Preview Area */}
-        <div className="relative w-full aspect-square bg-slate-100 flex items-center justify-center p-8 overflow-hidden">
+        <div className="relative w-full aspect-square bg-slate-50 dark:bg-slate-900/50 flex items-center justify-center p-8 overflow-hidden">
           {/* Base T-Shirt Image (Using a mask or blend mode for color) */}
-          <div 
+          <div
             className="relative w-full h-full max-w-[300px] mx-auto transition-transform duration-500"
-            style={{ 
+            style={{
               backgroundColor: color,
               maskImage: `url('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800')`,
               WebkitMaskImage: `url('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800')`,
@@ -93,9 +93,9 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
             }}
           >
             {/* The actual image for texture */}
-            <img 
-              src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800" 
-              alt="T-Shirt Base" 
+            <img
+              src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800"
+              alt="T-Shirt Base"
               className="w-full h-full object-contain mix-blend-multiply opacity-50"
               referrerPolicy="no-referrer"
             />
@@ -104,7 +104,7 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
             <div className="absolute top-[20%] left-[25%] w-[50%] h-[60%] border-2 border-dashed border-slate-300/50 flex flex-col items-center justify-center overflow-hidden">
               <AnimatePresence mode="wait">
                 {side === 'front' ? (
-                  <motion.div 
+                  <motion.div
                     key="front"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -114,7 +114,7 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
                     {frontImage && (
                       <div className="relative w-full h-1/2 flex items-center justify-center mb-2">
                         <img src={frontImage} alt="Front Design" className="max-w-full max-h-full object-contain" />
-                        <button 
+                        <button
                           onClick={() => setFrontImage(null)}
                           className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
                         >
@@ -132,7 +132,7 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
                     )}
                   </motion.div>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     key="back"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -142,7 +142,7 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
                     {backImage && (
                       <div className="relative w-full h-1/2 flex items-center justify-center mb-2">
                         <img src={backImage} alt="Back Design" className="max-w-full max-h-full object-contain" />
-                        <button 
+                        <button
                           onClick={() => setBackImage(null)}
                           className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
                         >
@@ -166,19 +166,19 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
         </div>
 
         {/* Controls */}
-        <div className="p-6 bg-white rounded-t-3xl -mt-6 relative z-10 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-          
+        <div className="p-6 bg-white dark:bg-slate-900 rounded-t-3xl -mt-6 relative z-10 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border-t border-slate-100 dark:border-white/5">
+
           {/* Side Toggle */}
-          <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
-            <button 
+          <div className="flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl mb-6">
+            <button
               onClick={() => setSide('front')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${side === 'front' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${side === 'front' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500'}`}
             >
               Front Side
             </button>
-            <button 
+            <button
               onClick={() => setSide('back')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${side === 'back' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${side === 'back' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500'}`}
             >
               Back Side
             </button>
@@ -186,7 +186,7 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
 
           {/* Color Selection */}
           <div className="mb-6">
-            <h3 className="text-sm font-bold text-slate-800 mb-3">T-Shirt Color</h3>
+            <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-3">T-Shirt Color</h3>
             <div className="flex gap-3">
               {['#ffffff', '#000000', '#ef4444', '#3b82f6', '#10b981'].map((c) => (
                 <button
@@ -201,8 +201,8 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
 
           {/* Design Tools */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-slate-800">Add Design ({side === 'front' ? 'Front' : 'Back'})</h3>
-            
+            <h3 className="text-sm font-bold text-slate-800 dark:text-white">Add Design ({side === 'front' ? 'Front' : 'Back'})</h3>
+
             {/* Text Input */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -213,22 +213,22 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
                 placeholder="Enter text..."
                 value={side === 'front' ? frontText : backText}
                 onChange={(e) => side === 'front' ? setFrontText(e.target.value) : setBackText(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 font-medium text-slate-800"
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 font-medium text-slate-800 dark:text-white transition-colors"
               />
             </div>
 
             {/* Image Upload */}
             <div>
-              <input 
-                type="file" 
-                accept="image/*" 
-                className="hidden" 
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
                 ref={fileInputRef}
                 onChange={handleImageUpload}
               />
-              <button 
+              <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 font-medium hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 dark:border-white/10 rounded-xl text-slate-600 dark:text-slate-400 font-medium hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
               >
                 <ImageIcon className="size-5" />
                 Upload Image
@@ -239,14 +239,14 @@ export default function CustomTShirt({ setScreen, addToCart }: CustomTShirtProps
       </main>
 
       {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-4 bg-white border-t border-slate-100 z-50">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-white/5 z-50">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-sm text-slate-500 font-medium">Total Price</p>
-            <p className="text-2xl font-black text-slate-900">৳500</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white">৳500</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={handleAddToCart}
           className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
         >
