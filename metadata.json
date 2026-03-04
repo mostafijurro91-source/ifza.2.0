@@ -1,0 +1,5 @@
+{
+  "name": "ifza",
+  "description": "A high-fashion virtual try-on and shopping experience.",
+  "requestFramePermissions": ["camera"]
+}
