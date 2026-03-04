@@ -60,7 +60,7 @@ export default function AdminAnalytics({ setScreen }: { setScreen: (s: Screen) =
           />
         </div>
 
-        <section className="bg-white/5 border border-white/10 rounded-3xl p-6">
+        <section className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-sm font-bold">Revenue Growth</h3>
@@ -89,7 +89,7 @@ export default function AdminAnalytics({ setScreen }: { setScreen: (s: Screen) =
           </div>
         </section>
 
-        <section className="bg-white/5 border border-white/10 rounded-3xl p-6">
+        <section className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-sm">
           <h3 className="text-sm font-bold mb-6">Top Performing Categories</h3>
           <div className="space-y-4">
             <CategoryProgress label="Baby Clothing" percentage={65} color="bg-blue-500" />
