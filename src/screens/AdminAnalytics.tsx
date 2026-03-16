@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+import { motion } from 'motion/react';
+import { ChevronLeft, DollarSign, ShoppingBag, TrendingUp, TrendingDown, ArrowUpRight, LayoutDashboard, Package, ReceiptText, Megaphone, BarChart3 } from 'lucide-react';
+import { Screen, Order, Product } from '../types';
+
 export default function AdminAnalytics({ setScreen, orders }: { setScreen: (s: Screen) => void, orders: Order[] }) {
   const [timeframe, setTimeframe] = useState<'Daily' | 'Monthly' | 'Yearly'>('Monthly');
 
