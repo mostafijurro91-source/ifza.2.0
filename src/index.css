@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Spline Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-primary: #f27f0d;
+  --color-background-dark: #221910;
+  --color-background-light: #f8f7f5;
+  --color-surface-dark: #27211b;
+  --color-accent-blue: #0ea5e9;
+}
+
+@layer base {
+  body {
+    @apply font-display antialiased bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neon-glow {
+  box-shadow: 0 0 15px rgba(242, 127, 13, 0.4);
+}
+
+.active-glow {
+  box-shadow: 0 0 20px rgba(242, 127, 13, 0.6);
+}
