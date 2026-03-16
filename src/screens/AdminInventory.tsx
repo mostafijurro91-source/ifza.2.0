@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, Search, Plus, Package, ArrowUpDown, Edit3, Trash2, Save, X, AlertCircle, LayoutDashboard, ReceiptText, BarChart3, Megaphone } from 'lucide-react';
 import { Screen, Product } from '../types';
 
-export default function AdminInventory({ setScreen, products, onUpdateProduct }: { setScreen: (s: Screen) => void, products: Product[], onUpdateProduct: (id: string, updates: Partial<Product & { stock: number }>) => void }) {
+export default function AdminInventory({ setScreen, products, onUpdateProduct, onDeleteProduct }: { setScreen: (s: Screen) => void, products: Product[], onUpdateProduct: (id: string, updates: Partial<Product & { stock: number }>) => void, onDeleteProduct?: (id: string) => void }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ price: 0, stock: 0 });
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const startEdit = (p: Product & { stock?: number }) => {
     setEditingId(p.id);
@@ -110,7 +111,12 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct }:
                       </div>
                       <div className="flex gap-2">
                         <button onClick={() => startEdit(product)} className="p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"><Edit3 className="size-4" /></button>
-                        <button className="p-2 bg-slate-50 border border-slate-200 rounded-lg text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="size-4" /></button>
+                        <button 
+                          onClick={() => setItemToDelete(product.id)}
+                          className="p-2 bg-slate-50 border border-slate-200 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
                       </div>
                     </div>
                   )}
@@ -149,6 +155,53 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct }:
         <AdminNavItem icon={<BarChart3 className="size-6" />} label="Analytics" onClick={() => setScreen('admin-analytics')} />
         <AdminNavItem icon={<Megaphone className="size-6" />} label="Marketing" onClick={() => setScreen('admin-marketing')} />
       </nav>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {itemToDelete && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl shadow-xl w-full max-w-sm overflow-hidden"
+            >
+              <div className="p-6 text-center">
+                <div className="size-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="size-8" />
+                </div>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">Delete Product?</h2>
+                <p className="text-sm text-slate-500 mb-6">Are you sure you want to remove this item? This action cannot be undone.</p>
+                
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setItemToDelete(null)}
+                    className="flex-1 py-3 px-4 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => {
+                      if (onDeleteProduct && itemToDelete) {
+                        onDeleteProduct(itemToDelete);
+                        setItemToDelete(null);
+                      }
+                    }}
+                    className="flex-1 py-3 px-4 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors shadow-md shadow-red-600/20"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

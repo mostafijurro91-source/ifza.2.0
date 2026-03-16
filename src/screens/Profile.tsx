@@ -30,7 +30,7 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
   const handleSaveProfile = () => {
     // In a real app, this would update the user context/backend
     setIsEditing(false);
-    alert('Profile updated successfully!');
+    // You could add a success state here if needed
   };
 
   return (
@@ -42,7 +42,7 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
               <div className="size-28 rounded-full border-4 border-white shadow-md p-1 bg-white">
                 <div
                   className="size-full rounded-full bg-cover bg-center bg-slate-100"
-                  style={user.isLoggedIn ? { backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8QgCHDHy6RFIdPqh6PK0tdYrX2oBadXlq3k1wBbWDd_bYt4-OiC95qV1kVfcgXePH7MqZZpgyJO-QR3Sr2LYxZCfYOdiQTOYXXCoHuw0EoHBBqKyy0_JztiuYVxa_p0S5MXzSBa7J0FxwWrGyKAZu8UzurbITlc1eY39f9V9vPe_EAcubz2m6DWQwougPeMqtRsMFSGqTKJsvg-4aAc6Ze0IcXuvVd69VYun_i6g1r0jNXCbigV8_ZH7O_2f3Hl7EsSNqiLSGn0-P')` } : {}}
+                  style={user.isLoggedIn ? { backgroundImage: `url('${user.avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'}')` } : {}}
                 >
                   {!user.isLoggedIn && <User className="size-full p-6 text-slate-400" />}
                 </div>
@@ -72,9 +72,9 @@ export default function Profile({ setScreen, user, onLogout }: { setScreen: (s: 
 
           <section className="px-4 py-2">
             <div className="grid grid-cols-3 gap-3">
-              <StatCard value={user.isLoggedIn ? "24" : "0"} label="Orders" />
-              <StatCard value={user.isLoggedIn ? "82" : "0"} label="Saved Looks" />
-              <StatCard value={user.isLoggedIn ? "1.2k" : "0"} label="Followers" />
+              <StatCard value={user.isLoggedIn ? "0" : "0"} label="Orders" />
+              <StatCard value={user.isLoggedIn ? "0" : "0"} label="Saved Looks" />
+              <StatCard value={user.isLoggedIn ? "12" : "0"} label="Credits" />
             </div>
           </section>
 

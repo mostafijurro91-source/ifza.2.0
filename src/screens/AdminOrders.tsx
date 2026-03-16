@@ -6,6 +6,7 @@ import { Screen, Order, CartItem } from '../types';
 export default function AdminOrders({ setScreen, orders, onUpdateStatus }: { setScreen: (s: Screen) => void, orders: Order[], onUpdateStatus: (id: string, status: 'Pending' | 'Accepted' | 'Shipped' | 'Delivered') => void }) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'info' } | null>(null);
 
   const generateInvoice = (order: Order) => {
     setSelectedOrder(order);
@@ -15,7 +16,8 @@ export default function AdminOrders({ setScreen, orders, onUpdateStatus }: { set
     setIsGeneratingPDF(true);
     setTimeout(() => {
       setIsGeneratingPDF(false);
-      alert('Invoice PDF Generated & Downloaded Successfully!');
+      setNotification({ message: 'Invoice PDF Generated & Downloaded Successfully!', type: 'success' });
+      setTimeout(() => setNotification(null), 3000);
     }, 2000);
   };
 
@@ -23,7 +25,8 @@ export default function AdminOrders({ setScreen, orders, onUpdateStatus }: { set
     if (selectedOrder) {
       onUpdateStatus(selectedOrder.id, status);
       setSelectedOrder({ ...selectedOrder, status }); // Optimistic update for modal
-      alert(`Order status updated to ${status}!`);
+      setNotification({ message: `Order status updated to ${status}!`, type: 'success' });
+      setTimeout(() => setNotification(null), 3000);
     }
   };
 

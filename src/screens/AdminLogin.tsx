@@ -3,10 +3,11 @@ import { motion } from 'motion/react';
 import { ShieldCheck, Lock, User, ArrowRight, ChevronLeft, Loader2 } from 'lucide-react';
 import { Screen } from '../types';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import bcrypt from 'bcryptjs';
 
 export default function AdminLogin({ setScreen }: { setScreen: (s: Screen) => void }) {
-  const [email, setEmail] = useState('admin@cokmoke.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -36,16 +37,22 @@ export default function AdminLogin({ setScreen }: { setScreen: (s: Screen) => vo
         .from('app_admins')
         .select('*')
         .eq('email', loginEmail)
-        .eq('password', password)
         .single();
 
       if (fetchError || !adminUser) {
         throw new Error('Incorrect email or password. Please try again.');
       }
 
+      // Verify hashed password
+      const isPasswordValid = await bcrypt.compare(password, adminUser.password);
+      if (!isPasswordValid) {
+        throw new Error('Incorrect email or password. Please try again.');
+      }
+
       if (adminUser.role === 'admin' || adminUser.role === 'staff' || adminUser.role === 'manager') {
-        // Save session in localStorage
-        localStorage.setItem('admin_session', JSON.stringify(adminUser));
+        // Save session in localStorage (exclude password hash)
+        const { password: _, ...sessionUser } = adminUser;
+        localStorage.setItem('admin_session', JSON.stringify(sessionUser));
         setScreen('admin');
       } else {
         throw new Error('Unauthorized access. Staff only.');

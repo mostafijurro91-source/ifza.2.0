@@ -140,8 +140,21 @@ export default function App() {
     if (mockAdminSession) {
       try {
         const parsed = JSON.parse(mockAdminSession);
-        if (parsed.role === 'admin' || parsed.role === 'staff' || parsed.role === 'manager') {
-          setIsAdminLoggedIn(true);
+        // Verify session against DB for security
+        if (parsed.email) {
+          supabase
+            .from('app_admins')
+            .select('role')
+            .eq('email', parsed.email)
+            .single()
+            .then(({ data }) => {
+              if (data && (data.role === 'admin' || data.role === 'staff' || data.role === 'manager')) {
+                setIsAdminLoggedIn(true);
+              } else {
+                localStorage.removeItem('admin_session');
+                setIsAdminLoggedIn(false);
+              }
+            });
         }
       } catch (e) { }
     }
@@ -205,7 +218,7 @@ export default function App() {
         .select('*');
 
       if (!catalogsError && catalogsData && catalogsData.length > 0) {
-        const mappedCatalogs: Catalog[] = catalogsData.map((c: any) => ({
+        const mappedCatalogs: Catalog[] = catalogsData.map((c) => ({
           id: c.id,
           name: c.name,
           image: c.image,
@@ -221,7 +234,7 @@ export default function App() {
         .select('*');
 
       if (!productsError && productsData && productsData.length > 0) {
-        const mappedProducts: Product[] = productsData.map((p: any) => ({
+        const mappedProducts: Product[] = productsData.map((p) => ({
           id: p.id,
           name: p.name,
           price: p.price,
@@ -242,7 +255,7 @@ export default function App() {
         .order('date', { ascending: false });
 
       if (!ordersError && ordersData) {
-        const mappedOrders: Order[] = ordersData.map((o: any) => ({
+        const mappedOrders: Order[] = ordersData.map((o) => ({
           id: o.id,
           date: o.date,
           status: o.status,
@@ -554,11 +567,11 @@ export default function App() {
       case 'splash':
         return <Splash onComplete={() => setScreen('home')} />;
       case 'login':
-        return <Login setScreen={setScreen} />;
+        return <Login setScreen={(s) => setScreen(s)} />;
       case 'signup':
-        return <Signup setScreen={setScreen} />;
+        return <Signup setScreen={(s) => setScreen(s)} />;
       case 'admin-login':
-        return <AdminLogin setScreen={setScreen} />;
+        return <AdminLogin setScreen={(s) => setScreen(s)} />;
       case 'home':
         return <Home
           setScreen={navigateWithAuth}

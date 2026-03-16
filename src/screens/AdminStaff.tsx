@@ -3,12 +3,7 @@ import { motion } from 'motion/react';
 import { Users, UserPlus, Trash2, Shield, ArrowLeft, Loader2, Check, X } from 'lucide-react';
 import { Screen } from '../types';
 import { supabase } from '../lib/supabase';
-import { createClient } from '@supabase/supabase-js';
-
-// We need a separate client instance to create users without logging out the current admin
-// This relies on the same URL/Key as the main client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import bcrypt from 'bcryptjs';
 
 export default function AdminStaff({ setScreen }: { setScreen: (s: Screen) => void }) {
   const [staff, setStaff] = useState<any[]>([]);
@@ -51,12 +46,15 @@ export default function AdminStaff({ setScreen }: { setScreen: (s: Screen) => vo
     setAddSuccess('');
 
     try {
+      // Hash the password before storing
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
       // Insert directly into app_admins table
       const { data, error: dbError } = await supabase
         .from('app_admins')
         .insert({
           email: newEmail,
-          password: newPassword,
+          password: hashedPassword,
           full_name: newName,
           role: newRole
         })

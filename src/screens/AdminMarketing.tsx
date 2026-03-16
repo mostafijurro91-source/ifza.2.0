@@ -84,7 +84,7 @@ export default function AdminMarketing({ setScreen }: { setScreen: (s: Screen) =
       return;
     }
     const banner = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: crypto.randomUUID(),
       ...newBanner
     };
     const updated = [banner, ...banners];

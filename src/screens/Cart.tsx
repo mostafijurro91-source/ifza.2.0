@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ChevronLeft, Trash2, Minus, Plus, ArrowRight, ShoppingBag, Camera, User, ShoppingCart, MapPin, Phone, CreditCard, MessageCircle } from 'lucide-react';
+import { ChevronLeft, Trash2, Minus, Plus, ArrowRight, ShoppingBag, Camera, User, ShoppingCart, MapPin, Phone, CreditCard, MessageCircle, X } from 'lucide-react';
 import { Screen, CartItem as CartItemType, UserProfile } from '../types';
 
 export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCheckout, user }: { 
@@ -18,15 +18,17 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
     address: user?.address || '',
     paymentMethod: 'Cash on Delivery'
   });
+  const [error, setError] = useState<string | null>(null);
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   const handleCheckoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!checkoutForm.name || !checkoutForm.phone || !checkoutForm.address) {
-      alert("Please fill in all details");
+      setError("Please fill in all details");
       return;
     }
+    setError(null);
     onCheckout(checkoutForm);
   };
 
@@ -37,6 +39,13 @@ export default function Cart({ setScreen, cart, onRemove, onUpdateQuantity, onCh
           <form id="checkout-form" onSubmit={handleCheckoutSubmit} className="space-y-6">
             <div className="space-y-4">
               <h2 className="text-xl font-bold">Shipping Details</h2>
+              
+              {error && (
+                <div className="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-bold flex items-center gap-2 border border-red-100 animate-shake">
+                  <X className="size-4" />
+                  {error}
+                </div>
+              )}
               
               <div className="space-y-2">
                 <label className="text-sm text-slate-500">Full Name</label>

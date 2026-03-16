@@ -58,6 +58,7 @@ export interface UserProfile {
   phone?: string;
   address?: string;
   isLoggedIn: boolean;
+  avatarUrl?: string;
   measurements?: UserMeasurements;
 }
 

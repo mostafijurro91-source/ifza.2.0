@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Camera, Menu, ShoppingBag, Zap, Heart, Accessibility, Home, Compass, ReceiptText, User, Star, Flame, Tag, ChevronRight, UserCheck, Briefcase, Smile, Moon, Sun, Wind, PenTool, Baby, Gamepad2, Activity, Watch, ShoppingBag as ShoppingBagIcon, Gem, Glasses, Scissors, Layers, Columns, ChevronLeft, Shirt, Crown, Sparkles, Flower2, Waves, UserCircle, MessageCircle } from 'lucide-react';
 import { Screen, Product, Catalog, UserProfile } from '../types';
@@ -59,9 +59,10 @@ const swipePower = (offset: number, velocity: number) => {
 export default function HomeDashboard({ setScreen, cartCount, searchQuery, setSearchQuery, products = [], setSearchImage, catalogs = [], savedLooks = [], toggleSavedLook, user }: { setScreen: (s: Screen, p?: Product, c?: Catalog) => void, cartCount: number, searchQuery: string, setSearchQuery: (q: string) => void, products?: Product[], setSearchImage?: (img: string | null) => void, catalogs?: Catalog[], savedLooks?: string[], toggleSavedLook?: (id: string) => void, user?: UserProfile }) {
   const recommendedSize = calculateRecommendedSize(user?.measurements);
   
-  const bestSellers = products.filter(p => p.rating === 5);
-  const trending = products.filter(p => p.rating === 3 || p.rating === 4);
-  const sale = products.filter(p => p.rating && p.rating <= 2);
+  const bestSellers = useMemo(() => products.filter(p => p.rating === 5), [products]);
+  const trending = useMemo(() => products.filter(p => p.rating === 3 || p.rating === 4), [products]);
+  const sale = useMemo(() => products.filter(p => p.rating && p.rating <= 2), [products]);
+  const sortedProducts = useMemo(() => [...products].sort((a, b) => a.name.localeCompare(b.name)), [products]);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [banners, setBanners] = useState<any[]>(DEFAULT_BANNERS);
@@ -296,7 +297,7 @@ export default function HomeDashboard({ setScreen, cartCount, searchQuery, setSe
             <h3 className="text-slate-900 text-lg font-bold md:text-xl">All Products</h3>
           </div>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {products.sort((a, b) => a.name.localeCompare(b.name)).map(product => (
+            {sortedProducts.map(product => (
               <ProductCard key={product.id} product={product} onClick={(p) => setScreen('product', p)} isSaved={savedLooks.includes(product.id)} onToggleSave={() => toggleSavedLook?.(product.id)} recommendedSize={recommendedSize} />
             ))}
           </div>

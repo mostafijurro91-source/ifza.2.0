@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Search, Plus, TrendingUp, ShoppingBag, Clock, DollarSign, LayoutDashboard, Package, ReceiptText, BarChart3, Settings, Bell, ChevronUp, ChevronDown, LogOut, ShieldCheck, Megaphone, FolderOpen, Database, Users, MessageSquare } from 'lucide-react';
 import { Screen } from '../types';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export default function AdminDashboard({ setScreen, onLogout }: { setScreen: (s: Screen) => void, onLogout: () => void }) {
   const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error' | 'mock'>('checking');
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const checkDb = async () => {
@@ -174,7 +175,14 @@ export default function AdminDashboard({ setScreen, onLogout }: { setScreen: (s:
             <ActionCard icon={<Users className="size-6" />} label="Staff" onClick={() => setScreen('admin-staff')} />
             <ActionCard icon={<Megaphone className="size-6" />} label="Marketing" onClick={() => setScreen('admin-marketing')} />
             <ActionCard icon={<BarChart3 className="size-6" />} label="Analytics" onClick={() => setScreen('admin-analytics')} />
-            <ActionCard icon={<Settings className="size-6" />} label="Settings" />
+            <ActionCard 
+              icon={<Settings className="size-6" />} 
+              label="Settings" 
+              onClick={() => {
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(null), 3000);
+              }}
+            />
           </div>
         </section>
       </main>
@@ -195,6 +203,23 @@ export default function AdminDashboard({ setScreen, onLogout }: { setScreen: (s:
         <AdminNavItem icon={<MessageSquare className="size-6" />} label="Messages" onClick={() => setScreen('admin-messages')} />
         <AdminNavItem icon={<BarChart3 className="size-6" />} label="Analytics" onClick={() => setScreen('admin-analytics')} />
       </nav>
+
+      {/* Notification Toast */}
+      <AnimatePresence>
+        {showNotification && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-24 left-4 right-4 z-[100] md:left-auto md:right-8 md:bottom-8 md:w-72"
+          >
+            <div className="bg-slate-900 text-white p-4 rounded-2xl flex items-center gap-3 shadow-2xl border border-slate-800">
+              <Settings className="size-5 text-blue-400" />
+              <p className="font-bold text-sm tracking-tight">Settings coming soon!</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
