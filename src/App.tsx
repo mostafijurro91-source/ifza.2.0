@@ -178,7 +178,7 @@ export default function App() {
   const checkUserRole = async (uid: string) => {
     try {
       const { data, error } = await supabase
-        .from('admins')
+        .from('app_admins')
         .select('role')
         .eq('id', uid)
         .single();
@@ -302,7 +302,7 @@ export default function App() {
 
           // Check if user is an admin
           const { data: adminUser } = await supabase
-            .from('admins')
+            .from('app_admins')
             .select('role')
             .eq('id', session.user.id)
             .single();

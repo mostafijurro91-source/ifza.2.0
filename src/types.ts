@@ -30,6 +30,7 @@ export type Screen =
   | 'saved-looks'
   | 'measurements'
   | 'payment-methods'
+  | 'buy-credits'
   | 'financial';
 
 export interface CustomDesign {
