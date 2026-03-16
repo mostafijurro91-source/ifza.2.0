@@ -98,4 +98,5 @@ export interface Order {
   shippingAddress?: string;
   phone?: string;
   paymentMethod?: string;
+  user_id?: string;
 }

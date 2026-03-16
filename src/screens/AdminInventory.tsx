@@ -3,24 +3,17 @@ import { motion } from 'motion/react';
 import { ChevronLeft, Search, Plus, Package, ArrowUpDown, Edit3, Trash2, Save, X, AlertCircle, LayoutDashboard, ReceiptText, BarChart3, Megaphone } from 'lucide-react';
 import { Screen, Product } from '../types';
 
-const INITIAL_PRODUCTS: (Product & { stock: number })[] = [
-  { id: '1', name: 'Premium Jamdani Saree', price: 4500, stock: 45, image: 'https://images.unsplash.com/photo-1610030469983-98e550d615ef?auto=format&fit=crop&q=80&w=200', category: 'Women' },
-  { id: '2', name: 'Designer Panjabi', price: 2450, stock: 12, image: 'https://images.unsplash.com/photo-1596455607563-ad6193f76b17?auto=format&fit=crop&q=80&w=200', category: 'Men' },
-  { id: '3', name: 'Traditional Nagra', price: 950, stock: 8, image: 'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&q=80&w=200', category: 'Shoes' },
-];
-
-export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) => void }) {
-  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+export default function AdminInventory({ setScreen, products, onUpdateProduct }: { setScreen: (s: Screen) => void, products: Product[], onUpdateProduct: (id: string, updates: Partial<Product & { stock: number }>) => void }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ price: 0, stock: 0 });
 
-  const startEdit = (p: typeof INITIAL_PRODUCTS[0]) => {
+  const startEdit = (p: Product & { stock?: number }) => {
     setEditingId(p.id);
-    setEditForm({ price: p.price, stock: p.stock });
+    setEditForm({ price: p.price, stock: p.stock || 0 });
   };
 
   const saveEdit = (id: string) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, price: editForm.price, stock: editForm.stock } : p));
+    onUpdateProduct(id, { price: editForm.price, stock: editForm.stock });
     setEditingId(null);
   };
 
@@ -59,7 +52,7 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
           </div>
 
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {products.map(product => (
+            {products.map((product: any) => (
               <motion.div 
                 layout
                 key={product.id} 
@@ -110,8 +103,8 @@ export default function AdminInventory({ setScreen }: { setScreen: (s: Screen) =
                         <div>
                           <p className="text-[8px] font-bold text-slate-500 uppercase">Stock</p>
                           <div className="flex items-center gap-1">
-                            <p className={`text-sm font-bold ${product.stock < 10 ? 'text-orange-600' : 'text-slate-900'}`}>{product.stock}</p>
-                            {product.stock < 10 && <AlertCircle className="size-3 text-orange-600" />}
+                            <p className={`text-sm font-bold ${(product.stock || 0) < 10 ? 'text-orange-600' : 'text-slate-900'}`}>{product.stock || 0}</p>
+                            {(product.stock || 0) < 10 && <AlertCircle className="size-3 text-orange-600" />}
                           </div>
                         </div>
                       </div>

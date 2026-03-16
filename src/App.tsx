@@ -234,6 +234,28 @@ export default function App() {
         }));
         setProducts(mappedProducts);
       }
+
+      // Fetch Orders
+      const { data: ordersData, error: ordersError } = await supabase
+        .from('orders')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (!ordersError && ordersData) {
+        const mappedOrders: Order[] = ordersData.map((o: any) => ({
+          id: o.id,
+          date: o.date,
+          status: o.status,
+          total: o.total,
+          customerName: o.customer_name,
+          shippingAddress: o.shipping_address,
+          phone: o.phone,
+          paymentMethod: o.payment_method,
+          items: o.items,
+          user_id: o.user_id
+        }));
+        setOrders(mappedOrders);
+      }
     };
 
     fetchData();
@@ -399,25 +421,97 @@ export default function App() {
 
     const newOrder: Order = {
       id: `#COKMOKE-${Math.floor(1000 + Math.random() * 9000)}`,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      date: new Date().toISOString(),
       status: 'Pending',
       items: [...cart],
       total: cart.reduce((acc, item) => acc + (item.price * item.quantity), 0),
       customerName: details.name || user.name || 'Guest',
       phone: details.phone,
       shippingAddress: details.address,
-      paymentMethod: details.paymentMethod
+      paymentMethod: details.paymentMethod,
+      user_id: undefined // In a real app, this would be supabase.auth.user()?.id
     };
+
+    // Persist to Supabase
+    if (isSupabaseConfigured) {
+      supabase.from('orders').insert({
+        id: newOrder.id,
+        status: newOrder.status,
+        total: newOrder.total,
+        customer_name: newOrder.customerName,
+        shipping_address: newOrder.shippingAddress,
+        phone: newOrder.phone,
+        payment_method: newOrder.paymentMethod,
+        items: newOrder.items
+      }).then(({ error }) => {
+        if (error) console.error('Error saving order:', error);
+      });
+    }
 
     setOrders(prev => [newOrder, ...prev]);
     setCart([]);
     setScreen('invoice');
   };
 
-  const updateOrderStatus = (orderId: string, status: 'Pending' | 'Shipped' | 'Delivered' | 'Accepted') => {
+  const updateOrderStatus = async (orderId: string, status: 'Pending' | 'Shipped' | 'Delivered' | 'Accepted') => {
+    if (isSupabaseConfigured) {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status })
+        .eq('id', orderId);
+      
+      if (error) {
+        console.error('Error updating order status:', error);
+        return;
+      }
+    }
+
     setOrders(prev => prev.map(order =>
-      order.id === orderId ? { ...order, status } : order
+      order.id === orderId ? { ...order, status: status as any } : order
     ));
+  };
+
+  const addProduct = async (product: Product) => {
+    if (isSupabaseConfigured) {
+      const { error } = await supabase
+        .from('products')
+        .insert({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          original_price: product.originalPrice,
+          image: product.image,
+          category: product.category,
+          catalog_id: product.catalogId,
+          is_virtual_ready: product.isVirtualReady,
+          rating: product.rating || 0
+        });
+      
+      if (error) {
+        console.error('Error adding product:', error);
+        return;
+      }
+    }
+    setProducts(prev => [...prev, product]);
+  };
+
+  const updateProduct = async (id: string, updates: Partial<Product & { stock: number }>) => {
+    if (isSupabaseConfigured) {
+      const { error } = await supabase
+        .from('products')
+        .update({
+          price: updates.price,
+          original_price: updates.originalPrice,
+          // Add other fields as needed
+        })
+        .eq('id', id);
+      
+      if (error) {
+        console.error('Error updating product:', error);
+        return;
+      }
+    }
+    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
   };
 
   const navigateWithAuth = (target: Screen, product?: Product, catalog?: Catalog) => {
@@ -543,13 +637,13 @@ export default function App() {
       case 'admin':
         return <AdminDashboard setScreen={navigateWithAuth} onLogout={handleAdminLogout} />;
       case 'admin-inventory':
-        return <AdminInventory setScreen={navigateWithAuth} />;
+        return <AdminInventory setScreen={navigateWithAuth} products={products} onUpdateProduct={updateProduct} />;
       case 'admin-orders':
         return <AdminOrders setScreen={navigateWithAuth} orders={orders} onUpdateStatus={updateOrderStatus} />;
       case 'admin-marketing':
         return <AdminMarketing setScreen={navigateWithAuth} />;
       case 'admin-analytics':
-        return <AdminAnalytics setScreen={navigateWithAuth} />;
+        return <AdminAnalytics setScreen={navigateWithAuth} orders={orders} />;
       case 'admin-catalogs':
         return <AdminCatalogs setScreen={navigateWithAuth} catalogs={catalogs} setCatalogs={setCatalogs} />;
       case 'admin-staff':
@@ -557,7 +651,7 @@ export default function App() {
       case 'admin-messages':
         return <AdminMessages setScreen={navigateWithAuth} />;
       case 'add-product':
-        return <AddProduct setScreen={navigateWithAuth} catalogs={catalogs} addProduct={(p) => setProducts([...products, p])} />;
+        return <AddProduct setScreen={navigateWithAuth} catalogs={catalogs} addProduct={addProduct} />;
       case 'orders':
         return <Orders setScreen={navigateWithAuth} orders={orders} />;
       case 'invoice':

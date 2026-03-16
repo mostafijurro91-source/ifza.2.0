@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { ChevronLeft, BarChart3, TrendingUp, TrendingDown, DollarSign, ShoppingBag, Users, Calendar, ArrowUpRight, ArrowDownRight, LayoutDashboard, Package, ReceiptText, Megaphone } from 'lucide-react';
-import { Screen } from '../types';
-
-export default function AdminAnalytics({ setScreen }: { setScreen: (s: Screen) => void }) {
+export default function AdminAnalytics({ setScreen, orders }: { setScreen: (s: Screen) => void, orders: Order[] }) {
   const [timeframe, setTimeframe] = useState<'Daily' | 'Monthly' | 'Yearly'>('Monthly');
+
+  // Calculate metrics
+  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+  const totalOrders = orders.length;
+  const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+  
+  // Basic grouping for categories (demo logic)
+  const categoryCounts: Record<string, number> = {};
+  orders.forEach(order => {
+    order.items.forEach(item => {
+      categoryCounts[item.category] = (categoryCounts[item.category] || 0) + item.quantity;
+    });
+  });
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
@@ -33,31 +41,31 @@ export default function AdminAnalytics({ setScreen }: { setScreen: (s: Screen) =
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <MetricCard 
             label="Total Revenue" 
-            value={timeframe === 'Daily' ? '৳1,240' : timeframe === 'Monthly' ? '৳45,230' : '৳542,800'} 
+            value={`৳${totalRevenue.toLocaleString()}`} 
             trend="+12.5%" 
             up 
             icon={<DollarSign className="size-4" />} 
           />
           <MetricCard 
             label="Total Orders" 
-            value={timeframe === 'Daily' ? '12' : timeframe === 'Monthly' ? '1,240' : '14,500'} 
+            value={totalOrders.toString()} 
             trend="+8.2%" 
             up 
             icon={<ShoppingBag className="size-4" />} 
           />
           <MetricCard 
-            label="New Customers" 
-            value={timeframe === 'Daily' ? '5' : timeframe === 'Monthly' ? '156' : '1,840'} 
-            trend="-2.1%" 
-            up={false} 
-            icon={<Users className="size-4" />} 
-          />
-          <MetricCard 
             label="Avg. Order Value" 
-            value="৳128.40" 
+            value={`৳${avgOrderValue.toFixed(2)}`} 
             trend="+4.4%" 
             up 
             icon={<TrendingUp className="size-4" />} 
+          />
+          <MetricCard 
+            label="Total Items Sold" 
+            value={orders.reduce((sum, o) => sum + o.items.length, 0).toString()} 
+            trend="+5.1%" 
+            up 
+            icon={<Package className="size-4" />} 
           />
         </div>
 
@@ -94,9 +102,9 @@ export default function AdminAnalytics({ setScreen }: { setScreen: (s: Screen) =
           <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
             <h3 className="text-sm font-bold mb-6 text-slate-900">Top Performing Categories</h3>
             <div className="space-y-4">
-              <CategoryProgress label="Baby Clothing" percentage={65} color="bg-blue-500" />
-              <CategoryProgress label="Toys & Games" percentage={45} color="bg-purple-500" />
-              <CategoryProgress label="Baby Care" percentage={30} color="bg-emerald-500" />
+              <CategoryProgress label="Women" percentage={Math.min(100, (categoryCounts['women'] || 0) * 10)} color="bg-blue-500" />
+              <CategoryProgress label="Men" percentage={Math.min(100, (categoryCounts['men'] || 0) * 10)} color="bg-purple-500" />
+              <CategoryProgress label="Baby" percentage={Math.min(100, (categoryCounts['baby'] || 0) * 10)} color="bg-emerald-500" />
             </div>
           </section>
         </div>
