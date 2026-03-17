@@ -165,18 +165,18 @@ export default function HomeDashboard({ setScreen, cartCount, searchQuery, setSe
                   }}
                   className="absolute inset-0 p-6 md:p-10 lg:p-16 flex flex-col justify-center cursor-grab active:cursor-grabbing"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%), url("${banners[currentBannerIndex]?.image}")`,
+                    backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%), url("${banners[currentBannerIndex]?.image}")`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                   }}
                 >
                   <div className="flex flex-col gap-2 relative z-10 max-w-xl">
                     {banners[currentBannerIndex]?.badge && (
-                      <span className="inline-block w-fit rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+                      <span className="inline-block w-fit rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
                         {banners[currentBannerIndex].badge}
                       </span>
                     )}
-                    <h3 className="text-3xl md:text-5xl font-black italic tracking-tighter text-slate-900">
+                    <h3 className="text-3xl md:text-5xl font-black italic tracking-tighter text-slate-900 drop-shadow-sm">
                       {banners[currentBannerIndex]?.title}
                     </h3>
                     <p className="text-sm md:text-lg font-medium text-slate-600">
