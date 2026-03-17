@@ -147,17 +147,22 @@ end;
 $$ language plpgsql security definer;
 
 -- App Admins: Only admins can manage the table.
+-- Allow checking for admin existence by email during login process (Public Select)
+drop policy if exists "Allow email lookup for login" on public.app_admins;
+create policy "Allow email lookup for login" on public.app_admins
+  for select
+  using (true);
+
 drop policy if exists "Admins can manage all admin records." on public.app_admins;
 create policy "Admins can manage all admin records." on public.app_admins
   for all
   using (public.is_admin())
   with check (public.is_admin());
 
--- Allow users to view their own record
-drop policy if exists "Users can view own admin record." on public.app_admins;
-create policy "Users can view own admin record." on public.app_admins
-  for select
-  using (auth.uid() = id);
+-- To create your first admin, run this in Supabase SQL Editor:
+-- INSERT INTO public.app_admins (email, password, role, full_name) 
+-- VALUES ('admin@cokmoke.com', '$2a$10$wS8C5Y.m4P6eYXZs/0k9.u1Z4/vJ/R6p7QY3M1I8iI1j0W5y1q/Kq', 'admin', 'Super Admin');
+-- Note: password is 'admin123' bcrypt hashed.
 
 -- Catalogs: Public read access. Admin write access (simplified for now: allow all authenticated to read).
 drop policy if exists "Catalogs are viewable by everyone." on public.catalogs;
