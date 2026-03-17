@@ -477,7 +477,7 @@ export default function App() {
           original_price: product.originalPrice,
           image: product.image,
           category: product.category,
-          catalog_id: product.catalogId,
+          catalog_id: product.catalogId || null,
           is_virtual_ready: product.isVirtualReady,
           rating: product.rating || 0,
           stock: product.stock || 0,
@@ -501,7 +501,8 @@ export default function App() {
           price: updates.price,
           original_price: updates.originalPrice,
           stock: updates.stock,
-          variants: updates.variants
+          variants: updates.variants,
+          catalog_id: updates.catalogId !== undefined ? (updates.catalogId || null) : undefined
         })
         .eq('id', id);
       
