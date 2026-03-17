@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Image as ImageIcon, X, Plus, Edit2, LayoutDashboard, Package, ReceiptText, BarChart3, Settings, Megaphone, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, Image as ImageIcon, X, Plus, Edit2, LayoutDashboard, Package, ReceiptText, BarChart3, Settings, Megaphone, CheckCircle2, Loader2 } from 'lucide-react';
 import { Screen, Catalog, Product } from '../types';
 
 export default function AddProduct({ setScreen, catalogs, addProduct }: { setScreen: (s: Screen) => void, catalogs: Catalog[], addProduct: (p: Product) => void }) {
@@ -319,6 +319,26 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
               placeholder="Describe the material, fit, and style..."
             ></textarea>
           </section>
+
+          <div className="pt-4">
+            <button 
+              onClick={handleSave}
+              disabled={isSaving}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-blue-600/20 transition-all active:scale-[0.98] disabled:opacity-50"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="size-6 animate-spin" />
+                  <span>সেভ হচ্ছে...</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="size-6" />
+                  <span>পণ্য সেভ করুন</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </main>
 

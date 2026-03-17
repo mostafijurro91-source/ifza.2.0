@@ -108,9 +108,19 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
                               className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500 text-slate-900"
                             />
                           </div>
-                          <div className="flex gap-1 self-end">
-                            <button onClick={() => saveEdit(product.id)} className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"><Save className="size-4" /></button>
-                            <button onClick={() => setEditingId(null)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500 transition-colors"><X className="size-4" /></button>
+                          <div className="flex flex-col gap-2 self-stretch mt-2">
+                            <button 
+                              onClick={() => saveEdit(product.id)} 
+                              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-600/10 active:scale-[0.98]"
+                            >
+                              <Save className="size-4" /> পরিবর্তন সেভ করুন
+                            </button>
+                            <button 
+                              onClick={() => setEditingId(null)} 
+                              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                            >
+                              <X className="size-4" /> বাতিল করুন
+                            </button>
                           </div>
                         </div>
                         
