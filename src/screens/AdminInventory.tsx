@@ -27,7 +27,7 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
         <h1 className="text-lg font-bold">ইনভেন্টরি ও স্টক</h1>
       </header>
 
-      <main className="flex-1 p-4 space-y-6 max-w-7xl mx-auto w-full pb-24">
+      <main className="flex-1 p-4 space-y-6 w-full pb-24">
         <div className="flex gap-3">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />

@@ -681,7 +681,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark overflow-x-hidden">
-      <div className="mx-auto w-full max-w-7xl min-h-screen relative shadow-2xl overflow-x-hidden bg-background-light dark:bg-background-dark">
+      <div className={`mx-auto w-full ${screen.startsWith('admin') || screen === 'add-product' ? 'max-w-full' : 'max-w-7xl'} min-h-screen relative shadow-2xl overflow-x-hidden bg-background-light dark:bg-background-dark`}>
         {screen !== 'splash' && !screen.startsWith('admin') && (
           <Header setScreen={navigateWithAuth} cartCount={cartCount} currentScreen={screen} />
         )}
