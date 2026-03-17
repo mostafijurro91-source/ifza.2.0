@@ -99,8 +99,12 @@ create table if not exists public.user_credits (
   updated_at timestamptz default now()
 );
 
+-- Drop legacy tables to ensure correct schema types
+drop table if exists public.admins cascade;
+drop table if exists public.app_admins cascade;
+
 -- Create App Admins Table (Used for staff/admin management)
-create table if not exists public.app_admins (
+create table public.app_admins (
   id uuid default uuid_generate_v4() primary key,
   email text not null unique,
   password text not null, -- Hashed password
@@ -137,7 +141,7 @@ returns boolean as $$
 begin
   return exists (
     select 1 from public.app_admins
-    where id = auth.uid() and (role = 'admin' or role = 'manager' or role = 'staff')
+    where id = auth.uid()::uuid and (role = 'admin' or role = 'manager' or role = 'staff')
   );
 end;
 $$ language plpgsql security definer;
@@ -179,7 +183,7 @@ drop policy if exists "Admins can view all orders." on public.orders;
 create policy "Users can view own orders." on public.orders for select using (auth.uid() = user_id);
 create policy "Users can insert own orders." on public.orders for insert with check (auth.uid() = user_id);
 -- Allow admins to view all orders
-create policy "Admins can view all orders." on public.orders for select using (auth.uid() in (select id from public.app_admins));
+create policy "Admins can view all orders." on public.orders for select using (auth.uid()::uuid in (select id from public.app_admins));
 
 -- Custom Designs: Users can view/create their own designs.
 drop policy if exists "Users can view own designs." on public.custom_designs;
