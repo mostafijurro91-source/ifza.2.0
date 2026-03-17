@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { Loader2 } from 'lucide-react';
 import { Screen, UserProfile, CartItem, Order, Product, Catalog, UserMeasurements } from './types';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 
@@ -134,142 +135,199 @@ export default function App() {
     setSavedLooks(prev => prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]);
   };
 
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
   useEffect(() => {
-    // Check mock sessions first
-    const mockAdminSession = localStorage.getItem('admin_session');
-    if (mockAdminSession) {
+    const initializeSession = async () => {
+      setIsAuthLoading(true);
+      
       try {
-        const parsed = JSON.parse(mockAdminSession);
-        // Verify session against DB for security
-        if (parsed.email) {
-          supabase
-            .from('app_admins')
-            .select('role')
-            .eq('email', parsed.email)
-            .single()
-            .then(({ data }) => {
-              if (data && (data.role === 'admin' || data.role === 'staff' || data.role === 'manager')) {
+        // 1. Check for custom mock/manual sessions first
+        const adminSession = localStorage.getItem('admin_session');
+        const userSession = localStorage.getItem('user_session');
+
+        if (adminSession) {
+          try {
+            const parsed = JSON.parse(adminSession);
+            if (parsed.email) {
+              const { data } = await supabase
+                .from('app_admins')
+                .select('role')
+                .eq('email', parsed.email)
+                .single();
+              
+              if (data && ['admin', 'staff', 'manager'].includes(data.role)) {
+                setIsAdminLoggedIn(true);
+              }
+            }
+          } catch (e) {
+            localStorage.removeItem('admin_session');
+          }
+        }
+
+        if (userSession) {
+          try {
+            const parsed = JSON.parse(userSession);
+            setUser(prev => ({ ...prev, isLoggedIn: true, name: parsed.name, email: parsed.email }));
+          } catch (e) {
+            localStorage.removeItem('user_session');
+          }
+        }
+
+        // 2. Check Supabase Auth Session
+        if (isSupabaseConfigured) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            setUser(prev => ({
+              ...prev,
+              isLoggedIn: true,
+              name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'User',
+              email: session.user.email || ''
+            }));
+
+            // If not already logged in as admin via custom session, check DB
+            if (!isAdminLoggedIn) {
+              const { data: adminData } = await supabase
+                .from('app_admins')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+              
+              if (adminData) {
                 setIsAdminLoggedIn(true);
               } else {
-                localStorage.removeItem('admin_session');
-                setIsAdminLoggedIn(false);
+                // Secondary check in profiles
+                const { data: profile } = await supabase
+                  .from('profiles')
+                  .select('role')
+                  .eq('id', session.user.id)
+                  .single();
+                if (profile?.role === 'admin' || profile?.role === 'staff') {
+                  setIsAdminLoggedIn(true);
+                }
               }
-            });
+            }
+          }
         }
-      } catch (e) { }
-    }
-
-    const mockUserSession = localStorage.getItem('user_session');
-    if (mockUserSession) {
-      try {
-        const parsed = JSON.parse(mockUserSession);
-        setUser(prev => ({ ...prev, isLoggedIn: true, name: parsed.name, email: parsed.email }));
-      } catch (e) { }
-    }
-
-    // Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        checkUserRole(session.user.id);
-        setUser(prev => ({ ...prev, isLoggedIn: true, name: session.user.user_metadata.full_name, email: session.user.email }));
+      } catch (err) {
+        console.error('Session initialization error:', err);
+      } finally {
+        setIsAuthLoading(false);
       }
-    }).catch(err => console.log('Supabase session check skipped'));
+    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    initializeSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        checkUserRole(session.user.id);
-        setUser(prev => ({ ...prev, isLoggedIn: true, name: session.user.user_metadata.full_name, email: session.user.email }));
-      } else if (!localStorage.getItem('user_session') && !localStorage.getItem('admin_session')) {
-        setIsAdminLoggedIn(false);
-        setUser(prev => ({ ...prev, isLoggedIn: false, name: undefined, email: undefined }));
+        setUser(prev => ({
+          ...prev,
+          isLoggedIn: true,
+          name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || ''
+        }));
+
+        const { data: adminData } = await supabase
+          .from('app_admins')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (adminData) {
+          setIsAdminLoggedIn(true);
+        }
+      } else {
+        setUser({ 
+          name: '', 
+          email: '', 
+          isLoggedIn: false,
+          measurements: { height: '', weight: '', chest: '', waist: '', hips: '', inseam: '' }
+        });
+        if (!localStorage.getItem('admin_session')) {
+          setIsAdminLoggedIn(false);
+        }
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
-
-  const checkUserRole = async (uid: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('app_admins')
-        .select('role')
-        .eq('id', uid)
-        .single();
-
-      if (data && (data.role === 'admin' || data.role === 'manager' || data.role === 'staff')) {
-        setIsAdminLoggedIn(true);
-      } else {
-        setIsAdminLoggedIn(false);
-      }
-    } catch (err) {
-      console.error('Error checking admin role:', err);
-      setIsAdminLoggedIn(false);
-    }
-  };
 
   // Fetch data from Supabase
   useEffect(() => {
     const fetchData = async () => {
-      if (!isSupabaseConfigured) return;
-
-      // Fetch Catalogs
-      const { data: catalogsData, error: catalogsError } = await supabase
-        .from('catalogs')
-        .select('*');
-
-      if (!catalogsError && catalogsData && catalogsData.length > 0) {
-        const mappedCatalogs: Catalog[] = catalogsData.map((c) => ({
-          id: c.id,
-          name: c.name,
-          image: c.image,
-          parentCategory: c.parent_category,
-          icon: c.icon
-        }));
-        setCatalogs(mappedCatalogs);
+      if (!isSupabaseConfigured) {
+        setIsAuthLoading(false);
+        return;
       }
 
-      // Fetch Products
-      const { data: productsData, error: productsError } = await supabase
-        .from('products')
-        .select('*');
+      try {
+        // Fetch Catalogs
+        const { data: catalogsData, error: catalogsError } = await supabase
+          .from('catalogs')
+          .select('*');
 
-      if (!productsError && productsData && productsData.length > 0) {
-        const mappedProducts: Product[] = productsData.map((p) => ({
-          id: p.id,
-          name: p.name,
-          price: p.price,
-          originalPrice: p.original_price,
-          image: p.image,
-          category: p.category,
-          catalogId: p.catalog_id,
-          rating: p.rating,
-          isVirtualReady: p.is_virtual_ready,
-          stock: p.stock,
-          variants: p.variants || []
-        }));
-        setProducts(mappedProducts);
-      }
+        if (!catalogsError && catalogsData) {
+          const mappedCatalogs: Catalog[] = catalogsData.map((c) => ({
+            id: c.id,
+            name: c.name,
+            image: c.image,
+            parentCategory: c.parent_category,
+            icon: c.icon
+          }));
+          setCatalogs(mappedCatalogs.length > 0 ? mappedCatalogs : INITIAL_CATALOGS);
+        }
 
-      // Fetch Orders
-      const { data: ordersData, error: ordersError } = await supabase
-        .from('orders')
-        .select('*')
-        .order('date', { ascending: false });
+        // Fetch Products
+        const { data: productsData, error: productsError } = await supabase
+          .from('products')
+          .select('*');
 
-      if (!ordersError && ordersData) {
-        const mappedOrders: Order[] = ordersData.map((o) => ({
-          id: o.id,
-          date: o.date,
-          status: o.status,
-          total: o.total,
-          customerName: o.customer_name,
-          shippingAddress: o.shipping_address,
-          phone: o.phone,
-          paymentMethod: o.payment_method,
-          items: o.items,
-          user_id: o.user_id
-        }));
-        setOrders(mappedOrders);
+        if (!productsError && productsData) {
+          const mappedProducts: Product[] = productsData.map((p) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            originalPrice: p.original_price,
+            image: p.image,
+            category: p.category,
+            catalogId: p.catalog_id,
+            rating: p.rating,
+            isVirtualReady: p.is_virtual_ready,
+            stock: p.stock,
+            variants: p.variants || []
+          }));
+          // Only show mock data if DB is completely empty and no records returned
+          setProducts(mappedProducts.length > 0 ? mappedProducts : INITIAL_PRODUCTS);
+        }
+
+        // Fetch Orders
+        const { data: ordersData, error: ordersError } = await supabase
+          .from('orders')
+          .select('*')
+          .order('date', { ascending: false });
+
+        if (!ordersError && ordersData) {
+          const mappedOrders: Order[] = ordersData.map((o) => ({
+            id: o.id,
+            date: o.date,
+            status: o.status,
+            total: o.total,
+            customerName: o.customer_name,
+            shippingAddress: o.shipping_address,
+            phone: o.phone,
+            paymentMethod: o.payment_method,
+            items: o.items,
+            user_id: o.user_id
+          }));
+          setOrders(mappedOrders);
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally {
+        setIsAuthLoading(false);
       }
     };
 
@@ -285,84 +343,6 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
-
-  useEffect(() => {
-    // Check custom admin session
-    const adminSession = localStorage.getItem('admin_session');
-    if (adminSession) {
-      try {
-        const parsed = JSON.parse(adminSession);
-        if (parsed && parsed.role) {
-          setIsAdminLoggedIn(true);
-        }
-      } catch (e) {
-        console.error("Failed to parse admin session");
-      }
-    }
-
-    // Check active session
-    if (isSupabaseConfigured) {
-      supabase.auth.getSession().then(async ({ data: { session } }) => {
-        if (session?.user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-          setUser({
-            name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'User',
-            email: session.user.email || '',
-            isLoggedIn: true
-          });
-
-          if (profile?.role === 'admin' || profile?.role === 'staff') {
-            setIsAdminLoggedIn(true);
-          }
-        }
-      }).catch(err => console.log('Supabase session check skipped'));
-
-      // Listen for auth changes
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        if (session?.user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-          setUser({
-            name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'User',
-            email: session.user.email || '',
-            isLoggedIn: true
-          });
-
-          // Check if user is an admin
-          const { data: adminUser } = await supabase
-            .from('app_admins')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-          if (adminUser) {
-            setIsAdminLoggedIn(true);
-          }
-        } else {
-          setUser({
-            name: '',
-            email: '',
-            isLoggedIn: false
-          });
-          // Only log out admin if there's no custom session
-          if (!localStorage.getItem('admin_session')) {
-            setIsAdminLoggedIn(false);
-          }
-        }
-      });
-
-      return () => subscription.unsubscribe();
-    }
-  }, []);
 
   const handleLogout = async () => {
     localStorage.removeItem('user_session');
@@ -505,9 +485,10 @@ export default function App() {
         });
       
       if (error) {
-        console.error('Error adding product:', error);
-        return;
+        console.error('Error adding product to Supabase:', error);
+        throw error; // Rethrow to handle in component
       }
+      console.log('Product added successfully to Supabase');
     }
     setProducts(prev => [...prev, product]);
   };
@@ -525,16 +506,36 @@ export default function App() {
         .eq('id', id);
       
       if (error) {
-        console.error('Error updating product:', error);
-        return;
+        console.error('Error updating product in Supabase:', error);
+        throw error;
       }
+      console.log('Product updated successfully in Supabase');
     }
     setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+  };
+
+  const deleteProduct = async (id: string) => {
+    if (isSupabaseConfigured) {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        console.error('Error deleting product from Supabase:', error);
+        throw error;
+      }
+      console.log('Product deleted successfully from Supabase');
+    }
+    setProducts(prev => prev.filter(p => p.id !== id));
   };
 
   const navigateWithAuth = (target: Screen, product?: Product, catalog?: Catalog) => {
     if (product) setSelectedProduct(product);
     if (catalog) setSelectedCatalog(catalog);
+
+    // If still verifying sessions, don't allow potentially insecure navigation
+    if (isAuthLoading) return;
 
     if ((target === 'try-on' || target === 'cart' || target === 'orders') && !user.isLoggedIn) {
       setHistory(prev => [...prev, screen]);
@@ -568,6 +569,14 @@ export default function App() {
   };
 
   const renderScreen = () => {
+    if (isAuthLoading && (screen.startsWith('admin') || screen === 'add-product')) {
+      return (
+        <div className="flex h-screen items-center justify-center">
+          <Loader2 className="animate-spin text-blue-600 size-10" />
+        </div>
+      );
+    }
+
     switch (screen) {
       case 'splash':
         return <Splash onComplete={() => setScreen('home')} />;
@@ -576,7 +585,10 @@ export default function App() {
       case 'signup':
         return <Signup setScreen={(s) => setScreen(s)} />;
       case 'admin-login':
-        return <AdminLogin setScreen={(s) => setScreen(s)} />;
+        return <AdminLogin setScreen={(s) => {
+          if (s === 'admin') setIsAdminLoggedIn(true);
+          setScreen(s);
+        }} />;
       case 'home':
         return <Home
           setScreen={navigateWithAuth}
@@ -655,7 +667,7 @@ export default function App() {
       case 'admin':
         return <AdminDashboard setScreen={navigateWithAuth} onLogout={handleAdminLogout} />;
       case 'admin-inventory':
-        return <AdminInventory setScreen={navigateWithAuth} products={products} onUpdateProduct={updateProduct} />;
+        return <AdminInventory setScreen={navigateWithAuth} products={products} onUpdateProduct={updateProduct} onDeleteProduct={deleteProduct} />;
       case 'admin-orders':
         return <AdminOrders setScreen={navigateWithAuth} orders={orders} onUpdateStatus={updateOrderStatus} />;
       case 'admin-marketing':
