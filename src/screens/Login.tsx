@@ -163,10 +163,10 @@ export default function Login({ setScreen }: { setScreen: (s: Screen) => void })
           Don't have an account? <button onClick={() => setScreen('signup')} className="text-blue-600 font-bold hover:text-blue-700 transition-colors">Sign Up</button>
         </p>
 
-        <div className="pt-8 text-center">
+        <div className="pt-4 text-center">
           <button 
             onClick={() => setScreen('admin-login')}
-            className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-blue-600 transition-colors"
+            className="text-[8px] font-medium text-slate-300 uppercase tracking-[0.2em] hover:text-slate-400 transition-colors"
           >
             Staff / Admin Portal
           </button>
