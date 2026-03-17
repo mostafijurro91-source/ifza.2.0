@@ -258,7 +258,10 @@ export default function App() {
   // Fetch data from Supabase
   useEffect(() => {
     const fetchData = async () => {
-      if (!isSupabaseConfigured) return;
+      if (!isSupabaseConfigured) {
+        setIsAuthLoading(false);
+        return;
+      }
 
       try {
         // Fetch Catalogs
@@ -266,7 +269,7 @@ export default function App() {
           .from('catalogs')
           .select('*');
 
-        if (!catalogsError && catalogsData && catalogsData.length > 0) {
+        if (!catalogsError && catalogsData) {
           const mappedCatalogs: Catalog[] = catalogsData.map((c) => ({
             id: c.id,
             name: c.name,
@@ -274,7 +277,7 @@ export default function App() {
             parentCategory: c.parent_category,
             icon: c.icon
           }));
-          setCatalogs(mappedCatalogs);
+          setCatalogs(mappedCatalogs.length > 0 ? mappedCatalogs : INITIAL_CATALOGS);
         }
 
         // Fetch Products
@@ -282,7 +285,7 @@ export default function App() {
           .from('products')
           .select('*');
 
-        if (!productsError && productsData && productsData.length > 0) {
+        if (!productsError && productsData) {
           const mappedProducts: Product[] = productsData.map((p) => ({
             id: p.id,
             name: p.name,
@@ -296,7 +299,8 @@ export default function App() {
             stock: p.stock,
             variants: p.variants || []
           }));
-          setProducts(mappedProducts);
+          // Only show mock data if DB is completely empty and no records returned
+          setProducts(mappedProducts.length > 0 ? mappedProducts : INITIAL_PRODUCTS);
         }
 
         // Fetch Orders
@@ -322,6 +326,8 @@ export default function App() {
         }
       } catch (err) {
         console.error('Error fetching data:', err);
+      } finally {
+        setIsAuthLoading(false);
       }
     };
 
@@ -508,6 +514,22 @@ export default function App() {
     setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
   };
 
+  const deleteProduct = async (id: string) => {
+    if (isSupabaseConfigured) {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        console.error('Error deleting product from Supabase:', error);
+        throw error;
+      }
+      console.log('Product deleted successfully from Supabase');
+    }
+    setProducts(prev => prev.filter(p => p.id !== id));
+  };
+
   const navigateWithAuth = (target: Screen, product?: Product, catalog?: Catalog) => {
     if (product) setSelectedProduct(product);
     if (catalog) setSelectedCatalog(catalog);
@@ -645,7 +667,7 @@ export default function App() {
       case 'admin':
         return <AdminDashboard setScreen={navigateWithAuth} onLogout={handleAdminLogout} />;
       case 'admin-inventory':
-        return <AdminInventory setScreen={navigateWithAuth} products={products} onUpdateProduct={updateProduct} />;
+        return <AdminInventory setScreen={navigateWithAuth} products={products} onUpdateProduct={updateProduct} onDeleteProduct={deleteProduct} />;
       case 'admin-orders':
         return <AdminOrders setScreen={navigateWithAuth} orders={orders} onUpdateStatus={updateOrderStatus} />;
       case 'admin-marketing':
