@@ -62,6 +62,13 @@ export interface UserProfile {
   measurements?: UserMeasurements;
 }
 
+export interface ProductVariant {
+  size: string;
+  color: string;
+  stock: number;
+  sku?: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -72,6 +79,8 @@ export interface Product {
   catalogId?: string;
   isVirtualReady?: boolean;
   rating?: number;
+  stock?: number;
+  variants?: ProductVariant[];
 }
 
 export interface Catalog {

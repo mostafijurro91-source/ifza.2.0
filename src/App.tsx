@@ -243,7 +243,9 @@ export default function App() {
           category: p.category,
           catalogId: p.catalog_id,
           rating: p.rating,
-          isVirtualReady: p.is_virtual_ready
+          isVirtualReady: p.is_virtual_ready,
+          stock: p.stock,
+          variants: p.variants || []
         }));
         setProducts(mappedProducts);
       }
@@ -497,7 +499,9 @@ export default function App() {
           category: product.category,
           catalog_id: product.catalogId,
           is_virtual_ready: product.isVirtualReady,
-          rating: product.rating || 0
+          rating: product.rating || 0,
+          stock: product.stock || 0,
+          variants: product.variants || []
         });
       
       if (error) {
@@ -515,7 +519,8 @@ export default function App() {
         .update({
           price: updates.price,
           original_price: updates.originalPrice,
-          // Add other fields as needed
+          stock: updates.stock,
+          variants: updates.variants
         })
         .eq('id', id);
       

@@ -53,92 +53,97 @@ export default function VirtualFittingRoom({ setScreen, items, onRemoveItem, onA
       return;
     }
 
-    // Credit Check Logic
+    // Credit Check Logic - get user once at the start
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        alert("অনুগ্রহ করে লগইন করুন।");
+        return;
+      }
+
       const { data: creditData, error: creditError } = await supabase
         .from('user_credits')
         .select('credits')
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+        .eq('user_id', user.id)
         .single();
 
-      if (creditError || !creditData || creditData.credits <= 0) {
+      // Handle database errors
+      if (creditError && creditError.code !== 'PGRST116') { // PGRST116 = no rows returned
+        console.error('Credit check failed:', creditError);
+        alert("ক্রেডিট চেক করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
+        return;
+      }
+
+      // Check if user has credits (if record exists and has credits > 0)
+      const currentCredits = creditData?.credits ?? 0;
+      if (currentCredits <= 0) {
         alert("আপনার ক্রেডিট শেষ! আরও ট্রাই-অন করতে ক্রেডিট কিনুন।");
         return;
       }
 
-      // Deduct credit
-      await supabase
-        .from('user_credits')
-        .update({ credits: creditData.credits - 1 })
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
-
-    } catch (error) {
-      console.error("Credit check failed", error);
-      alert("ক্রেডিট চেক করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
-      return;
-    }
-    if (items.length === 0) {
-      alert("দয়া করে প্রথমে ফিটিং রুমে আইটেম যোগ করুন।");
-      return;
-    }
-
-    setIsRendering(true);
-    setRenderingStep('আপনার ছবি তৈরি হচ্ছে...');
-
-    try {
-      // Convert uploaded user image to base64 (remove header)
-      const userBase64 = uploadedImage.split(',')[1];
-      const userMimeType = uploadedImage.split(';')[0].split(':')[1];
-
-      // Prepare parts for the model
-      const parts: any[] = [
-        {
-          inlineData: {
-            data: userBase64,
-            mimeType: userMimeType
-          }
-        }
-      ];
-
-      setRenderingStep('ডিজাইনের বিবরণ প্রসেস করা হচ্ছে...');
-
-      // Fetch and convert product images to base64
-      const productImagesParts = [];
-      for (const item of items) {
-        try {
-          // Try to get a higher resolution image if it's from Unsplash
-          let imageUrl = item.image;
-          if (imageUrl.includes('images.unsplash.com')) {
-            imageUrl = imageUrl.replace('w=400', 'w=1024').replace('w=800', 'w=1024');
-          }
-
-          const response = await fetch(imageUrl);
-          const blob = await response.blob();
-
-          const reader = new FileReader();
-          const base64 = await new Promise<string>((resolve) => {
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
-          productImagesParts.push({
-            inlineData: {
-              data: base64.split(',')[1],
-              mimeType: blob.type
-            }
-          });
-        } catch (e) {
-          console.warn(`Could not fetch image for ${item.name}`, e);
-        }
+      if (items.length === 0) {
+        alert("দয়া করে প্রথমে ফিটিং রুমে আইটেম যোগ করুন।");
+        return;
       }
 
-      // Add product images to parts
-      parts.push(...productImagesParts);
+      setIsRendering(true);
+      setRenderingStep('আপনার ছবি তৈরি হচ্ছে...');
 
-      const itemMapping = items.map((item, index) => {
-        return `- Image ${index + 2}: ${item.name} (${item.category})`;
-      }).join("\n");
+      try {
+        // Convert uploaded user image to base64 (remove header)
+        const userBase64 = uploadedImage.split(',')[1];
+        const userMimeType = uploadedImage.split(';')[0].split(':')[1];
 
-      const prompt = `
+        // Prepare parts for the model
+        const parts: any[] = [
+          {
+            inlineData: {
+              data: userBase64,
+              mimeType: userMimeType
+            }
+          }
+        ];
+
+        setRenderingStep('ডিজাইনের বিবরণ প্রসেস করা হচ্ছে...');
+
+        // Fetch and convert product images to base64
+        const productImagesParts = [];
+        for (const item of items) {
+          try {
+            // Try to get a higher resolution image if it's from Unsplash
+            let imageUrl = item.image;
+            if (imageUrl.includes('images.unsplash.com')) {
+              imageUrl = imageUrl.replace('w=400', 'w=1024').replace('w=800', 'w=1024');
+            }
+
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+
+            const reader = new FileReader();
+            const base64 = await new Promise<string>((resolve) => {
+              reader.onloadend = () => resolve(reader.result as string);
+              reader.readAsDataURL(blob);
+            });
+            productImagesParts.push({
+              inlineData: {
+                data: base64.split(',')[1],
+                mimeType: blob.type
+              }
+            });
+          } catch (e) {
+            console.warn(`Could not fetch image for ${item.name}`, e);
+          }
+        }
+
+        // Add product images to parts
+        parts.push(...productImagesParts);
+
+        const itemMapping = items.map((item, index) => {
+          return `- Image ${index + 2}: ${item.name} (${item.category})`;
+        }).join("\n");
+
+        const prompt = `
         You are an expert AI for Virtual Try-On (VTON).
         
         INPUTS:
@@ -158,68 +163,83 @@ export default function VirtualFittingRoom({ setScreen, items, onRemoveItem, onA
         ${itemMapping}
       `;
 
-      parts.push({ text: prompt });
+        parts.push({ text: prompt });
 
-      setRenderingStep('আপনার নতুন লুক তৈরি হচ্ছে...');
+        setRenderingStep('আপনার নতুন লুক তৈরি হচ্ছে...');
 
-      // Use Gemini REST API directly instead of SDK
-      const modelName = "gemini-2.0-flash-exp";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        // Use Gemini REST API directly instead of SDK
+        const modelName = "gemini-2.0-flash-exp";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
-      const requestBody = {
-        contents: [{ parts }],
-        generationConfig: {
-          temperature: 1,
-          top_p: 0.95,
-          top_k: 40,
-          maxOutputTokens: 8192,
-          responseModalities: ["image", "text"]
+        const requestBody = {
+          contents: [{ parts }],
+          generationConfig: {
+            temperature: 1,
+            top_p: 0.95,
+            top_k: 40,
+            maxOutputTokens: 8192,
+            responseModalities: ["image", "text"]
+          }
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('API Error:', errorData);
+          throw new Error(errorData.error?.message || 'Failed to generate image');
         }
-      };
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody)
-      });
+        const responseData = await response.json();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('API Error:', errorData);
-        throw new Error(errorData.error?.message || 'Failed to generate image');
-      }
+        // Extract image from response
+        let foundImage = false;
+        if (responseData.candidates?.[0]?.content?.parts) {
+          for (const part of responseData.candidates[0].content.parts) {
+            if (part.inlineData) {
+              const finalImage = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+              setGeneratedImage(finalImage);
+              foundImage = true;
 
-      const responseData = await response.json();
+              // Save to Supabase
+              await saveToHistory(finalImage);
 
-      // Extract image from response
-      let foundImage = false;
-      if (responseData.candidates?.[0]?.content?.parts) {
-        for (const part of responseData.candidates[0].content.parts) {
-          if (part.inlineData) {
-            const finalImage = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-            setGeneratedImage(finalImage);
-            foundImage = true;
+              // Deduct credit AFTER successful generation
+              const { error: deductError } = await supabase
+                .from('user_credits')
+                .update({ credits: currentCredits - 1 })
+                .eq('user_id', user.id);
 
-            // Save to Supabase
-            await saveToHistory(finalImage);
-            break;
+              if (deductError) {
+                console.error('Error deducting credit:', deductError);
+              }
+
+              break;
+            }
           }
         }
-      }
 
-      if (!foundImage) {
-        console.warn("No image found in response, checking text...");
-        alert("AI ছবি তৈরি করতে পারেনি। দয়া করে আবার চেষ্টা করুন।");
-      }
+        if (!foundImage) {
+          console.warn("No image found in response, checking text...");
+          alert("AI ছবি তৈরি করতে পারেনি। দয়া করে আবার চেষ্টা করুন।");
+        }
 
+      } catch (error) {
+        console.error("AI Generation Error:", error);
+        alert("ছবি তৈরি করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
+      } finally {
+        setIsRendering(false);
+        setRenderingStep('');
+      }
     } catch (error) {
-      console.error("AI Generation Error:", error);
-      alert("ছবি তৈরি করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
-    } finally {
-      setIsRendering(false);
-      setRenderingStep('');
+      console.error("Credit check failed:", error);
+      alert("ক্রেডিট চেক করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
     }
   };
 
@@ -361,12 +381,12 @@ export default function VirtualFittingRoom({ setScreen, items, onRemoveItem, onA
                   <div className="size-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-2">
                     <Camera className="size-8" />
                   </div>
-                   <div className="text-center">
+                  <div className="text-center">
                     <h3 className="text-slate-900 text-lg font-bold mb-1">আপনার ছবি আপলোড করুন</h3>
                     <p className="text-xs text-slate-500 mb-4">সেরা ফলাফলের জন্য, সঠিক আলোতে একটি পূর্ণ-শরীরের ছবি আপলোড করুন।</p>
                   </div>
 
-                   <label className="w-full relative cursor-pointer group max-w-xs">
+                  <label className="w-full relative cursor-pointer group max-w-xs">
                     <div className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl text-center shadow-md shadow-primary/20 group-hover:bg-primary/90 transition-colors">
                       ছবি নির্বাচন করুন
                     </div>
@@ -380,7 +400,7 @@ export default function VirtualFittingRoom({ setScreen, items, onRemoveItem, onA
                 </div>
               </section>
             ) : (
-               <section className="px-4 py-2 md:px-0 md:py-0">
+              <section className="px-4 py-2 md:px-0 md:py-0">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-slate-900 text-lg font-bold leading-tight tracking-tight">নির্বাচিত আইটেম</h3>
                   <span className="text-xs text-slate-500">{items.length} টি আইটেম</span>

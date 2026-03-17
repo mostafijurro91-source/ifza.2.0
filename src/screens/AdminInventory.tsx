@@ -5,16 +5,16 @@ import { Screen, Product } from '../types';
 
 export default function AdminInventory({ setScreen, products, onUpdateProduct, onDeleteProduct }: { setScreen: (s: Screen) => void, products: Product[], onUpdateProduct: (id: string, updates: Partial<Product & { stock: number }>) => void, onDeleteProduct?: (id: string) => void }) {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ price: 0, stock: 0 });
+  const [editForm, setEditForm] = useState<{ price: number, stock: number, variants: any[] }>({ price: 0, stock: 0, variants: [] });
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-  const startEdit = (p: Product & { stock?: number }) => {
+  const startEdit = (p: Product) => {
     setEditingId(p.id);
-    setEditForm({ price: p.price, stock: p.stock || 0 });
+    setEditForm({ price: p.price, stock: p.stock || 0, variants: p.variants || [] });
   };
 
   const saveEdit = (id: string) => {
-    onUpdateProduct(id, { price: editForm.price, stock: editForm.stock });
+    onUpdateProduct(id, { price: editForm.price, stock: editForm.stock, variants: editForm.variants });
     setEditingId(null);
   };
 
@@ -24,7 +24,7 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
         <button onClick={() => setScreen('admin')} className="size-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="text-lg font-bold">Inventory & Stock</h1>
+        <h1 className="text-lg font-bold">ইনভেন্টরি ও স্টক</h1>
       </header>
 
       <main className="flex-1 p-4 space-y-6 max-w-7xl mx-auto w-full pb-24">
@@ -33,22 +33,22 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
             <input 
               className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500 transition-colors shadow-sm" 
-              placeholder="Search inventory..."
+              placeholder="পণ্য খুঁজুন..."
             />
           </div>
           <button 
             onClick={() => setScreen('add-product')}
             className="px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl flex items-center gap-2 font-bold text-sm shadow-md shadow-blue-600/20 transition-all active:scale-95"
           >
-            <Plus className="size-4" /> Add
+            <Plus className="size-4" /> নতুন যোগ করুন
           </button>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between px-2">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Product List</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">পণ্যের তালিকা</p>
             <button className="flex items-center gap-1 text-[10px] font-bold text-blue-500 uppercase">
-              <ArrowUpDown className="size-3" /> Sort by Stock
+              <ArrowUpDown className="size-3" /> স্টক অনুযায়ী সাজান
             </button>
           </div>
 
@@ -70,39 +70,117 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
                   </div>
                   
                   {editingId === product.id ? (
-                    <div className="flex items-center gap-3 mt-2">
-                      <div className="flex-1">
-                        <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">Price ($)</p>
-                        <input 
-                          type="number"
-                          value={editForm.price}
-                          onChange={e => setEditForm(prev => ({ ...prev, price: Number(e.target.value) }))}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500 text-slate-900"
-                        />
+                    <>
+                      <div className="flex items-center gap-3 mt-2">
+                        <div className="flex-1">
+                          <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">মূল্য (৳)</p>
+                          <input 
+                            type="number"
+                            value={editForm.price}
+                            onChange={e => setEditForm(prev => ({ ...prev, price: Number(e.target.value) }))}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500 text-slate-900"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">স্টক</p>
+                          <input 
+                            type="number"
+                            value={editForm.stock}
+                            onChange={e => setEditForm(prev => ({ ...prev, stock: Number(e.target.value) }))}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500 text-slate-900"
+                          />
+                        </div>
+                        <div className="flex gap-1 self-end">
+                          <button onClick={() => saveEdit(product.id)} className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"><Save className="size-4" /></button>
+                          <button onClick={() => setEditingId(null)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500 transition-colors"><X className="size-4" /></button>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">Stock</p>
-                        <input 
-                          type="number"
-                          value={editForm.stock}
-                          onChange={e => setEditForm(prev => ({ ...prev, stock: Number(e.target.value) }))}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500 text-slate-900"
-                        />
+                      
+                      {/* Variants Editing */}
+                      <div className="mt-4 space-y-3 pt-4 border-t border-slate-100">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ভ্যারিয়েন্ট তালিকা</p>
+                          <button 
+                            onClick={() => setEditForm(prev => ({ ...prev, variants: [...prev.variants, { size: '', color: '', stock: 0, sku: '' }] }))}
+                            className="text-blue-500 text-[10px] font-bold uppercase flex items-center gap-1"
+                          >
+                            <Plus className="size-3" /> যোগ করুন
+                          </button>
+                        </div>
+                        <div className="grid gap-2">
+                          {editForm.variants.map((v: any, i: number) => (
+                            <div key={i} className="bg-slate-50 rounded-xl p-3 border border-slate-200 relative">
+                              <button 
+                                onClick={() => setEditForm(prev => ({ ...prev, variants: prev.variants.filter((_, idx) => idx !== i) }))}
+                                className="absolute top-1 right-1 p-1 text-red-500 hover:bg-red-100 rounded-full"
+                              >
+                                <X className="size-3" />
+                              </button>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <p className="text-[8px] font-bold text-slate-400 uppercase mb-0.5">সাইজ</p>
+                                  <input 
+                                    value={v.size}
+                                    onChange={e => {
+                                      const newVars = [...editForm.variants];
+                                      newVars[i] = { ...newVars[i], size: e.target.value };
+                                      setEditForm(prev => ({ ...prev, variants: newVars }));
+                                    }}
+                                    className="w-full bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px]"
+                                  />
+                                </div>
+                                <div>
+                                  <p className="text-[8px] font-bold text-slate-400 uppercase mb-0.5">রং</p>
+                                  <input 
+                                    value={v.color}
+                                    onChange={e => {
+                                      const newVars = [...editForm.variants];
+                                      newVars[i] = { ...newVars[i], color: e.target.value };
+                                      setEditForm(prev => ({ ...prev, variants: newVars }));
+                                    }}
+                                    className="w-full bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px]"
+                                  />
+                                </div>
+                                <div>
+                                  <p className="text-[8px] font-bold text-slate-400 uppercase mb-0.5">স্টক</p>
+                                  <input 
+                                    type="number"
+                                    value={v.stock}
+                                    onChange={e => {
+                                      const newVars = [...editForm.variants];
+                                      newVars[i] = { ...newVars[i], stock: Number(e.target.value) };
+                                      setEditForm(prev => ({ ...prev, variants: newVars }));
+                                    }}
+                                    className="w-full bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px]"
+                                  />
+                                </div>
+                                <div>
+                                  <p className="text-[8px] font-bold text-slate-400 uppercase mb-0.5">SKU</p>
+                                  <input 
+                                    value={v.sku}
+                                    onChange={e => {
+                                      const newVars = [...editForm.variants];
+                                      newVars[i] = { ...newVars[i], sku: e.target.value };
+                                      setEditForm(prev => ({ ...prev, variants: newVars }));
+                                    }}
+                                    className="w-full bg-white border border-slate-200 rounded px-1.5 py-0.5 text-[10px]"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex gap-1 self-end">
-                        <button onClick={() => saveEdit(product.id)} className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"><Save className="size-4" /></button>
-                        <button onClick={() => setEditingId(null)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500 transition-colors"><X className="size-4" /></button>
-                      </div>
-                    </div>
+                    </>
                   ) : (
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex gap-4">
                         <div>
-                          <p className="text-[8px] font-bold text-slate-500 uppercase">Price</p>
+                          <p className="text-[8px] font-bold text-slate-500 uppercase">মূল্য</p>
                           <p className="text-sm font-bold text-blue-600">৳{product.price}</p>
                         </div>
                         <div>
-                          <p className="text-[8px] font-bold text-slate-500 uppercase">Stock</p>
+                          <p className="text-[8px] font-bold text-slate-500 uppercase">স্টক</p>
                           <div className="flex items-center gap-1">
                             <p className={`text-sm font-bold ${(product.stock || 0) < 10 ? 'text-orange-600' : 'text-slate-900'}`}>{product.stock || 0}</p>
                             {(product.stock || 0) < 10 && <AlertCircle className="size-3 text-orange-600" />}
@@ -133,8 +211,8 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
             <Package className="size-5" />
           </div>
           <div>
-            <p className="text-xs font-bold text-blue-900">Stock Summary</p>
-            <p className="text-[10px] text-blue-600/80">3 items low on stock. Review suggested.</p>
+            <p className="text-xs font-bold text-blue-900">স্টক সারাংশ</p>
+            <p className="text-[10px] text-blue-600/80">৩টি পণ্যের স্টক কম। চেক করার পরামর্শ দেওয়া হলো।</p>
           </div>
         </div>
       </div>
@@ -173,17 +251,17 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
             >
               <div className="p-6 text-center">
                 <div className="size-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="size-8" />
+                   <AlertCircle className="size-8" />
                 </div>
-                <h2 className="text-xl font-bold text-slate-900 mb-2">Delete Product?</h2>
-                <p className="text-sm text-slate-500 mb-6">Are you sure you want to remove this item? This action cannot be undone.</p>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">পণ্যটি মুছে ফেলবেন?</h2>
+                <p className="text-sm text-slate-500 mb-6">আপনি কি নিশ্চিত যে এই আইটেমটি সরাতে চান? এই কাজটি আর ফেরানো যাবে না।</p>
                 
                 <div className="flex gap-3">
                   <button 
                     onClick={() => setItemToDelete(null)}
                     className="flex-1 py-3 px-4 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors"
                   >
-                    Cancel
+                    বাতিল
                   </button>
                   <button 
                     onClick={() => {
@@ -194,7 +272,7 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
                     }}
                     className="flex-1 py-3 px-4 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors shadow-md shadow-red-600/20"
                   >
-                    Delete
+                    মুছে ফেলুন
                   </button>
                 </div>
               </div>

@@ -11,8 +11,25 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
     price: 0,
     category: 'women',
     catalogId: '',
-    image: ''
+    image: '',
+    stock: 0,
+    variants: []
   });
+
+  const addVariant = () => {
+    const newVariants = [...(formData.variants || []), { size: '', color: '', stock: 0, sku: '' }];
+    setFormData({ ...formData, variants: newVariants });
+  };
+
+  const removeVariant = (index: number) => {
+    const newVariants = (formData.variants || []).filter((_, i) => i !== index);
+    setFormData({ ...formData, variants: newVariants });
+  };
+
+  const updateVariant = (index: number, field: string, value: any) => {
+    const newVariants = (formData.variants || []).map((v, i) => i === index ? { ...v, [field]: value } : v);
+    setFormData({ ...formData, variants: newVariants });
+  };
 
   const handleSave = () => {
     if (!formData.name || !formData.price || !formData.image) return;
@@ -27,7 +44,9 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
         image: formData.image!,
         category: formData.category!,
         catalogId: formData.catalogId,
-        isVirtualReady: true
+        isVirtualReady: true,
+        stock: Number(formData.stock) || 0,
+        variants: formData.variants || []
       });
       setIsSaving(false);
       setShowSuccess(true);
@@ -165,6 +184,17 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
                   />
                 </div>
               </div>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Initial Stock</label>
+                <input 
+                  type="number"
+                  value={formData.stock || ''}
+                  onChange={e => setFormData({...formData, stock: Number(e.target.value)})}
+                  className="w-full bg-white border border-slate-200 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-blue-500 transition-colors shadow-sm text-slate-900" 
+                  placeholder="e.g. 100"
+                />
+              </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
                 <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
@@ -210,14 +240,67 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
         <div className="md:col-span-1 space-y-8">
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">Variants & Stock</h3>
-              <button className="text-blue-600 text-sm font-bold flex items-center gap-1 hover:text-blue-700 transition-colors">
-                <Plus className="size-4" /> Add Variant
+              <h3 className="text-lg font-bold text-slate-900">ভ্যারিয়েন্ট ও স্টক</h3>
+              <button 
+                onClick={addVariant}
+                className="text-blue-600 text-sm font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"
+              >
+                <Plus className="size-4" /> ভ্যারিয়েন্ট যোগ করুন
               </button>
             </div>
             <div className="space-y-3">
-              <VariantCard label="Size: M | Color: Midnight Black" stock="45" sku="DR-BLK-M-01" />
-              <VariantCard label="Size: L | Color: Midnight Black" stock="12" sku="DR-BLK-L-01" />
+              {(formData.variants || []).map((variant, index) => (
+                <div key={index} className="bg-white border border-slate-200 rounded-xl p-4 space-y-4 shadow-sm relative">
+                  <button 
+                    onClick={() => removeVariant(index)}
+                    className="absolute top-2 right-2 p-1 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                  >
+                    <X className="size-4" />
+                  </button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">সাইজ</p>
+                      <input 
+                        value={variant.size}
+                        onChange={e => updateVariant(index, 'size', e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900" 
+                        placeholder="উদা: M, L, XL"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">রং</p>
+                      <input 
+                        value={variant.color}
+                        onChange={e => updateVariant(index, 'color', e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900" 
+                        placeholder="উদা: কালো, নীল"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">স্টক পরিমাণ</p>
+                      <input 
+                        type="number"
+                        value={variant.stock || ''}
+                        onChange={e => updateVariant(index, 'stock', Number(e.target.value))}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900" 
+                        placeholder="0"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SKU</p>
+                      <input 
+                        value={variant.sku}
+                        onChange={e => updateVariant(index, 'sku', e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900" 
+                        placeholder="Optional"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {(formData.variants || []).length === 0 && (
+                <p className="text-sm text-slate-500 italic text-center py-4">এখনও কোনো ভ্যারিয়েন্ট যোগ করা হয়নি।</p>
+              )}
             </div>
           </section>
 
@@ -240,7 +323,7 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
             className="fixed bottom-24 left-4 right-4 z-[60] bg-green-500 text-white p-4 rounded-2xl flex items-center gap-3 shadow-2xl"
           >
             <CheckCircle2 className="size-6" />
-            <p className="font-bold">Product Added Successfully!</p>
+            <p className="font-bold">পণ্যটি সফলভাবে যোগ করা হয়েছে!</p>
           </motion.div>
         )}
       </AnimatePresence>
