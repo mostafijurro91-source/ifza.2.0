@@ -505,9 +505,10 @@ export default function App() {
         });
       
       if (error) {
-        console.error('Error adding product:', error);
-        return;
+        console.error('Error adding product to Supabase:', error);
+        throw error; // Rethrow to handle in component
       }
+      console.log('Product added successfully to Supabase');
     }
     setProducts(prev => [...prev, product]);
   };
@@ -525,9 +526,10 @@ export default function App() {
         .eq('id', id);
       
       if (error) {
-        console.error('Error updating product:', error);
-        return;
+        console.error('Error updating product in Supabase:', error);
+        throw error;
       }
+      console.log('Product updated successfully in Supabase');
     }
     setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
   };

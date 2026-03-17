@@ -31,12 +31,15 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
     setFormData({ ...formData, variants: newVariants });
   };
 
-  const handleSave = () => {
-    if (!formData.name || !formData.price || !formData.image) return;
+  const handleSave = async () => {
+    if (!formData.name || !formData.price || !formData.image) {
+      alert('দয়া করে পণ্যের নাম, মূল্য এবং ছবি প্রদান করুন।');
+      return;
+    }
     
     setIsSaving(true);
-    setTimeout(() => {
-      addProduct({
+    try {
+      await addProduct({
         id: `p${Date.now()}`,
         name: formData.name!,
         price: Number(formData.price),
@@ -48,13 +51,18 @@ export default function AddProduct({ setScreen, catalogs, addProduct }: { setScr
         stock: Number(formData.stock) || 0,
         variants: formData.variants || []
       });
+      
       setIsSaving(false);
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
         setScreen('admin-inventory');
       }, 2000);
-    }, 1500);
+    } catch (error: any) {
+      console.error('Detailed save error:', error);
+      setIsSaving(false);
+      alert('পণ্য সেভ করতে সমস্যা হয়েছে: ' + (error.message || 'Unknown error'));
+    }
   };
 
   return (

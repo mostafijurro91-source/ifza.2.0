@@ -13,9 +13,14 @@ export default function AdminInventory({ setScreen, products, onUpdateProduct, o
     setEditForm({ price: p.price, stock: p.stock || 0, variants: p.variants || [] });
   };
 
-  const saveEdit = (id: string) => {
-    onUpdateProduct(id, { price: editForm.price, stock: editForm.stock, variants: editForm.variants });
-    setEditingId(null);
+  const saveEdit = async (id: string) => {
+    try {
+      await onUpdateProduct(id, { price: editForm.price, stock: editForm.stock, variants: editForm.variants });
+      setEditingId(null);
+    } catch (error: any) {
+        console.error('Update error:', error);
+        alert('তথ্য আপডেট করতে সমস্যা হয়েছে: ' + (error.message || 'Unknown error'));
+    }
   };
 
   return (
