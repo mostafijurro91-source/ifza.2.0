@@ -467,9 +467,15 @@ export default function App() {
   };
 
   const addProduct = async (product: Product) => {
+    console.log('--- Attempting to Add Product ---');
+    console.log('ID:', product.id);
+    console.log('Name:', product.name);
+    console.log('Image Size:', product.image.length, 'chars');
+    console.log('Supabase Configured:', isSupabaseConfigured);
+
     if (isSupabaseConfigured) {
       try {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('products')
           .insert({
             id: product.id,
@@ -483,21 +489,26 @@ export default function App() {
             rating: product.rating || 0,
             stock: product.stock || 0,
             variants: product.variants || []
-          });
+          })
+          .select();
         
         if (error) {
-          console.error('Error adding product to Supabase:', error);
-          alert('সুপাবেস ডাটাবেজে পণ্য যোগ করতে সমস্যা হয়েছে: ' + error.message);
-          throw error;
+          console.error('Supabase Insert Error:', error);
+          alert(`সুপাবেস ডাটাবেজে সেভ হতে ব্যর্থ হয়েছে!\nError: ${error.message}\nদয়া করে আমার দেওয়া SQL কোডটি সুপাবেস-এ রান করেছেন কি না চেক করুন।`);
+          return; // Stop here if DB save fails
         }
-        console.log('Product added successfully to Supabase');
+        
+        console.log('Product saved successfully to Supabase:', data);
       } catch (err: any) {
-        console.error('Catch block error:', err);
-        throw err;
+        console.error('Unexpected Catch Error:', err);
+        alert('অপ্রত্যাশিত সমস্যা: ' + err.message);
+        return;
       }
     } else {
-      console.warn('Supabase not configured. Adding product locally only.');
+      console.warn('Supabase is not configured. Product added to local memory only.');
+      alert('সতর্কতা: সুপাবেস কনফিগার করা নেই। পণ্যটি সাময়িকভাবে অ্যাড হবে কিন্তু রিফ্রেশ দিলে চলে যাবে।');
     }
+    
     setProducts(prev => [...prev, product]);
   };
 
