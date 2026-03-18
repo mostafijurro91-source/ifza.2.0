@@ -468,27 +468,35 @@ export default function App() {
 
   const addProduct = async (product: Product) => {
     if (isSupabaseConfigured) {
-      const { error } = await supabase
-        .from('products')
-        .insert({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          original_price: product.originalPrice,
-          image: product.image,
-          category: product.category,
-          catalog_id: product.catalogId || null,
-          is_virtual_ready: product.isVirtualReady,
-          rating: product.rating || 0,
-          stock: product.stock || 0,
-          variants: product.variants || []
-        });
-      
-      if (error) {
-        console.error('Error adding product to Supabase:', error);
-        throw error; // Rethrow to handle in component
+      try {
+        const { error } = await supabase
+          .from('products')
+          .insert({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            original_price: product.originalPrice,
+            image: product.image,
+            category: product.category,
+            catalog_id: product.catalogId || null,
+            is_virtual_ready: product.isVirtualReady,
+            rating: product.rating || 0,
+            stock: product.stock || 0,
+            variants: product.variants || []
+          });
+        
+        if (error) {
+          console.error('Error adding product to Supabase:', error);
+          alert('সুপাবেস ডাটাবেজে পণ্য যোগ করতে সমস্যা হয়েছে: ' + error.message);
+          throw error;
+        }
+        console.log('Product added successfully to Supabase');
+      } catch (err: any) {
+        console.error('Catch block error:', err);
+        throw err;
       }
-      console.log('Product added successfully to Supabase');
+    } else {
+      console.warn('Supabase not configured. Adding product locally only.');
     }
     setProducts(prev => [...prev, product]);
   };
